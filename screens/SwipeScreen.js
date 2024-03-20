@@ -5,7 +5,8 @@ import LoginScreen from './SignupScreen';
 import { useNavigation } from '@react-navigation/native';
 import Swiper from "react-native-deck-swiper"
 import {Entypo, Ionicons} from "@expo/vector-icons"
-
+import { supabase } from '../lib/helper/supabaseClient'
+import { authSuccess } from './LoginScreen';
 
 const person = [
   {
@@ -28,7 +29,7 @@ const person = [
     id: 2,
   },
   {
-    name: "Seth Griggs",
+    name: "Harry",
     age: 24,
     desc: "God why",
     pic: ["https://media.discordapp.net/attachments/946532387947429909/1178768514601984092/image.png"],
@@ -44,14 +45,32 @@ const person = [
 ];
 
 
+const performSignOut = async () => {
+  console.log("performSignOut Triggered")
+  const {error} = await supabase.auth.signOut();
+  if(error) throw error
+  console.log("Sign Out Successful")
+}
+
 export default function SwipeScreen() {
-    const navigation=useNavigation();
-    const swipeRef = useRef()
+  const navigation=useNavigation();
+  const swipeRef = useRef()
+
+  const handleSignOutClick = () => {
+    console.log("handleSignOutClick Triggered")
+    performSignOut().then(() =>navigation.push('Login'))
+  }
+
+  const handleMessagesClick = () => {
+    console.log("handleMessagesClick Triggered");
+    navigation.push('Messages');
+  }
+
   return (
   
     <SafeAreaView className="flex-1 mt-6">
       <View className="flex-row items-center justify-between px-5"> 
-        <TouchableOpacity onPress={()=> navigation.push("Login")}>
+        <TouchableOpacity onPress = {handleSignOutClick}>
           <Image
             className="h-10 w-10 rounded-full"
             source={{
@@ -66,7 +85,7 @@ export default function SwipeScreen() {
             source={require("../components/img/logo.png")}
           />
         </TouchableOpacity>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={handleMessagesClick}>
           <Image
             className="h-10 w-10"
             source={require("../components/img/message.png")}

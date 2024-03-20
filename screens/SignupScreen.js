@@ -3,10 +3,28 @@ import Animated, {FadeIn, FadeInUp, FadeInDown, FadeOut} from 'react-native-rean
 import React from 'react'
 import { TextInput, TouchableOpacity } from 'react-native'
 import {View, Image, StatusBar, Text} from 'react-native'
+import { supabase } from '../lib/helper/supabaseClient'
+import { signUpNewUser } from '../components/signUp'
+
+let email = ''
+let username = ''
+let password = ''
 
 
-export default function LoginScreen() {
+export default function SignupScreen() {
     const navigation = useNavigation();
+
+    [username, onChangeUsername] = React.useState();
+    [password, onChangePassword] = React.useState();
+    [email, onChangeEmail] = React.useState();
+
+    const handleClickSignUp = () => {
+        signUpNewUser({username, 
+            password, 
+            email
+        });
+    }
+    // module.exports = {username, password, email};
     return (
         <View className='bg-rose-700 h-full w-full'>
             <StatusBar style="light"/>
@@ -16,7 +34,7 @@ export default function LoginScreen() {
             <View className="h-full w-full flex justify-around pt-40 pb-10">
                 {/* Title */}
                 <View className="flex items-center">
-                    <Animated.Text entering={FadeInUp.duration(1000).springify()}  className="text-orange-100 font-bold tracking-wider text-5xl">
+                    <Animated.Text entering={FadeInUp.duration(1000).springify()} className="text-orange-100 font-bold tracking-wider text-5xl">
                         VTubeGether
                     </Animated.Text>
                 </View>
@@ -24,16 +42,17 @@ export default function LoginScreen() {
                 {/* Form */}
                 <View className='flex items-center mx-4 space-y-4'>
                     <View className="bg-orange-100 p-5 rounded-2x1 w-full">
-                        <TextInput placeholder="Username" placeholderTextColor={'gray'} />
+                        <TextInput onChangeText = {onChangeUsername} placeholder="Username" placeholderTextColor={'gray'} />
                     </View>
                     <View className="bg-orange-100 p-5 rounded-2x1 w-full">
-                        <TextInput placeholder="Email" placeholderTextColor={'gray'} />
+                        <TextInput onChangeText = {onChangeEmail} placeholder="Email" placeholderTextColor={'gray'} />
                     </View> 
                     <View className="bg-orange-100 p-5 rounded-2x1 w-full">
-                        <TextInput placeholder="Password" placeholderTextColor={'gray'} secureTextEntry={'True'}/>
+                        <TextInput onChangeText={onChangePassword} placeholder="Password" placeholderTextColor={'gray'} secureTextEntry={true}/>
                     </View>
                     <View className='w-full'>
                         <TouchableOpacity 
+                            onPress={handleClickSignUp}
                             className='w-full bg-sky-400 p-3 rounded-2x1 mb-3'>
                             <Text className="text-x1 font-bold text-white text-center">Signup</Text>
                         </TouchableOpacity>
