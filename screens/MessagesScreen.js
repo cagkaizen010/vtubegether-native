@@ -3,6 +3,8 @@ import {SafeAreaView, Image, Text, View, StyleSheet, Button, TouchableOpacity, K
 import {Swipe} from './SwipeScreen'
 import { useNavigation } from '@react-navigation/native';
 import Chat from '../components/message/Chat';
+import { Icon } from 'react-native-elements';
+import tw from 'twrnc'
 import Actions from '../components/message/Actions';
 
 export default function MessagesScreen() {
@@ -10,15 +12,17 @@ export default function MessagesScreen() {
 
     const handleHomeButtonClick = () => {
         console.log("handleHomeButtonClick Triggered")
-        navigation.push('Swipe')
+        navigation.push('Inbox')
     }
     return (
         <SafeAreaView className="flex-1 mt-6">
             <View className="flex-row items-center justify-between px-5">
                 <TouchableOpacity onPress={handleHomeButtonClick}>
-                    <Image 
-                        className="h-10 w-10"
-                        source= {require("../components/img/home.png")}
+                    <Icon 
+                        iconStyle={tw`px-2 py-2`}
+                        name='chevron-back-outline'
+                        type="ionicon"
+                        solid={true}
                     />
                 </TouchableOpacity>
                 <TouchableOpacity>
@@ -31,7 +35,6 @@ export default function MessagesScreen() {
                 <TouchableOpacity>
                     <Image 
                         className="h-10 w-10"
-                        source={require("../components/img/message.png")}
                     />
                 </TouchableOpacity>
                 
@@ -41,3 +44,4 @@ export default function MessagesScreen() {
         </SafeAreaView>
     )
 }
+

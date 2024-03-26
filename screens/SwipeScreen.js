@@ -61,9 +61,9 @@ export default function SwipeScreen() {
     performSignOut().then(() =>navigation.push('Login'))
   }
 
-  const handleMessagesClick = () => {
-    console.log("handleMessagesClick Triggered");
-    navigation.push('Messages');
+  const handleInboxClick= () => {
+    console.log("handleInboxClick Triggered");
+    navigation.push('Inbox');
   }
 
   return (
@@ -85,7 +85,7 @@ export default function SwipeScreen() {
             source={require("../components/img/logo.png")}
           />
         </TouchableOpacity>
-        <TouchableOpacity onPress={handleMessagesClick}>
+        <TouchableOpacity onPress={handleInboxClick}>
           <Image
             className="h-10 w-10"
             source={require("../components/img/message.png")}
