@@ -1,14 +1,16 @@
 import { useNavigation} from '@react-navigation/native'
 import Animated, {FadeIn, FadeInUp, FadeInDown, FadeOut} from 'react-native-reanimated'
 import React from 'react'
-import { TextInput, TouchableOpacity } from 'react-native'
+import { TextInput, KeyboardAvoidingView, TouchableOpacity, Icon, StyleSheet } from 'react-native'
 import {View, Image, StatusBar, Text} from 'react-native'
 import { supabase } from '../lib/helper/supabaseClient'
 import { signUpNewUser } from '../components/signUp'
+import tw from 'twrnc'
 
 let email = ''
 let username = ''
 let password = ''
+
 
 
 export default function SignupScreen() {
@@ -19,13 +21,16 @@ export default function SignupScreen() {
     [email, onChangeEmail] = React.useState();
 
     const handleClickSignUp = () => {
-        signUpNewUser({username, 
-            password, 
-            email
-        });
+        console.log("handleClickSignUp triggered")
+        navigation.push('SignUpImageAdd')
+        // signUpNewUser({username, 
+        //     password, 
+        //     email
+        // });
     }
     // module.exports = {username, password, email};
     return (
+    <KeyboardAvoidingView  behavior='padding'>
         <View className='bg-rose-700 h-full w-full'>
             <StatusBar style="light"/>
             <Image className='h-full w-full absolute' source={require('../assets/images/background.png')}/>
@@ -50,6 +55,7 @@ export default function SignupScreen() {
                     <View className="bg-orange-100 p-5 rounded-2x1 w-full">
                         <TextInput onChangeText={onChangePassword} placeholder="Password" placeholderTextColor={'gray'} secureTextEntry={true}/>
                     </View>
+
                     <View className='w-full'>
                         <TouchableOpacity 
                             onPress={handleClickSignUp}
@@ -66,7 +72,9 @@ export default function SignupScreen() {
                     </View>
                 </View>
             </View>
-            {/*  */}
         </View>
+        </KeyboardAvoidingView>
     )
 }
+
+

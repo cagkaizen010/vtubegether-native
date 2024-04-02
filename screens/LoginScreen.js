@@ -1,7 +1,7 @@
 import { useNavigation} from '@react-navigation/native'
 import Animated, {FadeIn, FadeInUp, FadeInDown, FadeOut} from 'react-native-reanimated'
 import React from 'react'
-import { TextInput, TouchableOpacity } from 'react-native'
+import { KeyboardAvoidingView, TextInput, TouchableOpacity } from 'react-native'
 import {View, Image, StatusBar, Text} from 'react-native'
 import { supabase } from '../lib/helper/supabaseClient'
 import { makeRedirectUri } from 'expo-auth-session'
@@ -152,6 +152,7 @@ export default function LoginScreen() {
 
 
     return (
+        <KeyboardAvoidingView behavior='padding'>
         <View className='bg-rose-700 h-full w-full'>
             <StatusBar style="light"/>
             <Image className='h-full w-full absolute' source={require('../assets/images/background.png')}/>
@@ -202,6 +203,6 @@ export default function LoginScreen() {
                     </Animated.View>
                 </View>
             </View>
-        </View>
+        </View></KeyboardAvoidingView>
     )
 }
