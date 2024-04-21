@@ -4,7 +4,7 @@ import React from 'react'
 import { TextInput, KeyboardAvoidingView, TouchableOpacity, Icon, StyleSheet } from 'react-native'
 import {View, Image, StatusBar, Text} from 'react-native'
 import { supabase } from '../lib/helper/supabaseClient'
-import { signUpNewUser } from '../components/signUp'
+import { signUpNewUser } from '../components/user/signUp'
 import tw from 'twrnc'
 
 let email = ''
@@ -16,13 +16,12 @@ let password = ''
 export default function SignupScreen() {
     const navigation = useNavigation();
 
-    [username, onChangeUsername] = React.useState();
     [password, onChangePassword] = React.useState();
     [email, onChangeEmail] = React.useState();
 
-    const handleClickSignUp = () => {
-        console.log("handleClickSignUp triggered")
-        navigation.push('SignUpImageAdd')
+    const handleClickNext = () => {
+        console.log("handleClickNext triggered")
+        navigation.push('SignUpAliasAdd')
         // signUpNewUser({username, 
         //     password, 
         //     email
@@ -40,15 +39,12 @@ export default function SignupScreen() {
                 {/* Title */}
                 <View className="flex items-center">
                     <Animated.Text entering={FadeInUp.duration(1000).springify()} className="text-orange-100 font-bold tracking-wider text-5xl">
-                        VTubeGether
+                        Enter your email and password 
                     </Animated.Text>
                 </View>
 
                 {/* Form */}
                 <View className='flex items-center mx-4 space-y-4'>
-                    <View className="bg-orange-100 p-5 rounded-2x1 w-full">
-                        <TextInput onChangeText = {onChangeUsername} placeholder="Username" placeholderTextColor={'gray'} />
-                    </View>
                     <View className="bg-orange-100 p-5 rounded-2x1 w-full">
                         <TextInput onChangeText = {onChangeEmail} placeholder="Email" placeholderTextColor={'gray'} />
                     </View> 
@@ -58,9 +54,9 @@ export default function SignupScreen() {
 
                     <View className='w-full'>
                         <TouchableOpacity 
-                            onPress={handleClickSignUp}
+                            onPress={handleClickNext}
                             className='w-full bg-sky-400 p-3 rounded-2x1 mb-3'>
-                            <Text className="text-x1 font-bold text-white text-center">Signup</Text>
+                            <Text className="text-x1 font-bold text-white text-center">Next</Text>
                         </TouchableOpacity>
                     </View>
                     <View className='flex-row justify-center'>

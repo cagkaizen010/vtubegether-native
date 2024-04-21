@@ -7,6 +7,8 @@ import { Icon } from 'react-native-elements';
 import tw from 'twrnc'
 import Actions from '../components/message/Actions';
 
+// AI Girlfriend, simple API calls
+
 export default function MessagesScreen() {
     const navigation = useNavigation();
 

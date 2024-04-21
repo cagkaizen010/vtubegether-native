@@ -1,5 +1,5 @@
 import React from 'react'
-import { supabase } from '../lib/helper/supabaseClient'
+import { supabase } from '../../lib/helper/supabaseClient'
 
 async function signUpNewUser(props) {
     console.log(props)

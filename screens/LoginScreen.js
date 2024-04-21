@@ -136,7 +136,7 @@ export default function LoginScreen() {
             navigation.push('Swipe')
             // handle sign in event
         } else if (event === 'SIGNED_OUT') {
-            // console.log("Inside SIGNED_OUT");
+            console.log("Inside SIGNED_OUT");
             // handle sign out event
         } else if (event === 'PASSWORD_RECOVERY') {
             console.log("Inside PASSWORD_RECOVERY");
