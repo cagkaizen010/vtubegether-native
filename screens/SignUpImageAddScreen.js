@@ -1,18 +1,30 @@
 import React, {useState} from 'react'
 import Animated, {FadeIn, FadeInUp, FadeInDown, FadeOut} from 'react-native-reanimated'
-import * as ImagePicker from 'expo-image-picker'
 import { Image, Modal, SafeAreaView, Text, StatusBar, View, TouchableOpacity } from 'react-native'
 import { useNavigation } from '@react-navigation/native';
 import {Icon} from 'react-native-elements'
+import * as ImagePicker from 'expo-image-picker'
 import tw from 'twrnc'
-import fileUploadModal from '../components/fileUpload/fileUpload'
+import FileUploadModal from '../components/fileUpload/fileUpload'
+import Avatar from '../components/Avatar';
 
 export default function SignUpImageAddScreen() {
     const navigation = useNavigation();
-    const [modal, setModalVisible] = useState(false)
+    const [modalVisible, setModalVisible] = React.useState(false)
 
-    const handleButtonPress= async () => {
+    // const handleButtonPress= async () => {
+    //     console.log("inside handleButtonPress")
+    //     fileUploadModal()
+    // }
+
+    const handleButtonPress = () => {
+        console.log(modalVisible)
+        setModalVisible(() => !modalVisible)
+    }
+
+    const onCameraButtonPress= async () => {
         try {
+
             await ImagePicker.
             requestCameraPermissionsAsync();
             console.log("Camera Access Granted?")
@@ -25,12 +37,21 @@ export default function SignUpImageAddScreen() {
             
             if (!result.canceled) {
                 // save image
-                
                 // paused @ 3:10
             }               
 
         } catch(err) {
             console.log(err)
+        }
+    }
+
+    const saveImage = async (image) => {
+        try {
+            setImage(image);
+            setModalVisible(false);
+        }
+        catch (error) {
+            throw(error)
         }
     }
 
@@ -43,31 +64,59 @@ export default function SignUpImageAddScreen() {
                     {/* Heading */}
                     <View className="flex items-center">
                         <Animated.Text entering={FadeInUp.duration(1000).springify()} className="text-orange-100 font-bold tracking-wider text-5xl">
-                        Suck my fucking cock
+                        Upload some pictures! 
                         </Animated.Text>
                     </View>
-
-                    {/* Upload Buttons */}
-                    <View className='flex items-center mx-4 space-y-4'>
-                        <View className="bg-orange-100 p-5 rounded-2x1 w-full">
-                            <TouchableOpacity
-                                onPress = {handleButtonPress}
-                            >
-                                <Image
-                                    source={require('../components/img/logo.png') }
-                                />
-
-                                {/* <Icon
-                                iconStyle={tw`px-2 py-2`}
-                                name='chevron-back-outline'
-                                type="ionicon"
-                                solid={true}>
-                                </Icon> */}
-                            </TouchableOpacity>
-                        </View>
+                    <View className="flex items-center">
+                        <Avatar onButtonPress={() =>setModalVisible(true)}/>
                     </View>
+                    {/* Upload Buttons */}
+                    {/* <View className='flex items-center mx-4 space-y-4'> */}
+                        {/* <View className="bg-orange-100 p-5 rounded-2x1 w-full"> */}
+                            {/* Opens modal panel */}
+                            {/* <TouchableOpacity
+                                onPress= {handleButtonPress}
+                            >
+                                <Icon
+                                    iconStyle={tw`px-2 py-2`}
+                                    name='camera-outline'
+                                    type='ionicon'
+                                    solid={true}
+                                >
+
+                                </Icon> 
+                            </TouchableOpacity> */}
+                            {/* <FileUploadModal onButtonPress={() => setModalVisible(true)} /> */}
+                            
+                        {/* </View> */}
+                    {/* </View> */}
                 </View>
+                {/* <Modal isVisible={modalVisible}>
+                    <SafeAreaView>
+                        <Text>  Inside the Modal</Text>
+                        <TouchableOpacity
+                            onPress= {handleButtonPress}
+                        >
+                            <Icon
+                                iconStyle={tw`px-2 py-2`}
+                                name='camera-outline'
+                                type='ionicon'
+                                solid={true}
+                            >
+                                      </Icon> 
+                        </TouchableOpacity>
+                    </SafeAreaView>
+                </Modal> */}
             </View>
+            <FileUploadModal
+                modalVisible={modalVisible}
+                onBackPress={() => {
+                    setModalVisible(false);
+                }}
+                onCameraPress={() => uploadImage()}
+
+            
+            />
         </View>
     )
 }

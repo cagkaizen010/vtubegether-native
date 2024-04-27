@@ -19,6 +19,8 @@ export default function SignUpAliasAddScreen() {
         <KeyboardAvoidingView behavior='padding'>
             <View className='bg-rose-700 h-full w-full'>
                 <StatusBar style="light"/>
+
+                
                 <Image className='h-full w-full absolute' source={require('../assets/images/background.png')}/>
 
                 {/* Heading */}
