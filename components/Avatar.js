@@ -3,26 +3,55 @@ import {View, TouchableOpacity, StyleSheet} from 'react-native'
 import tw from 'twrnc'
 import {Icon} from 'react-native-elements'
 
+import FileUploadModal from '../components/fileUpload/fileUpload'
 
-export default function Avatar() {
-    const onButtonPress = () => {
-        console.log("onButtonPress in Avatar pressed")
-    }
-    return(
-    <View>
-        <TouchableOpacity style={styles.editButton} onPress={onButtonPress}>
-            <Icon
-                iconStyle={tw`px-2 py-2`}
-                name='camera-outline'
-                type='ionicon'
-                solid={true}
-            >
-            </Icon>
-           
-        </TouchableOpacity>
-    </View>
-    )
+const Avatar = ({
+  id,
+  uri,
+  style,
+  imgStyle,
+  onPress,
+  aviOnly=false,
+  ...props
+}) => {
+
+  const [modalVisible, setModalVisible] = useState(false);
+  
+  return(
+  <View className="flex items-center">
+    {/* {console.log("key: " + key)} */}
+    {!aviOnly && (
+      <TouchableOpacity 
+        style={styles.editButton} 
+        onPress={() => {
+          setModalVisible(true)
+        }}
+      />
+        
+       
+    
+    )}
+    <FileUploadModal
+      id={id}
+      modalVisible={modalVisible}
+      onBackPress={() => {
+          setModalVisible(false);
+      }}
+      onRemovePress={() => {
+          setModalVisible(false);
+      }}
+      onGalleryPress={() => {
+          () => onGalleryButtonPress()
+      }}
+      onCameraPress={() => onCameraButtonPress()}
+      tecks={props.text}
+      color={props.color}
+    />   
+  </View>
+  )
 }
+
+export default Avatar
 
 const styles = StyleSheet.create({
   container: {
@@ -39,9 +68,10 @@ const styles = StyleSheet.create({
   },
   editButton: {
     // backgroundColor: colors.secondary,
-    backgroundColor: "#f82",
-    borderRadius: 24,
-    padding: 8,
+    backgroundColor: "#fff",
+    // borderRadius: 24,
+    padding: 20,
+    height: 90,
     position: "absolute",
     right: 5,
     bottom: 5

@@ -10,7 +10,7 @@ import Avatar from '../components/Avatar';
 
 export default function SignUpImageAddScreen() {
     const navigation = useNavigation();
-    const [modalVisible, setModalVisible] = React.useState(false)
+    const [modalVisible, setModalVisible] = useState(false)
 
     // const handleButtonPress= async () => {
     //     console.log("inside handleButtonPress")
@@ -18,8 +18,17 @@ export default function SignUpImageAddScreen() {
     // }
 
     const handleButtonPress = () => {
-        console.log(modalVisible)
+        console.log("modalVisible: " + modalVisible)
         setModalVisible(() => !modalVisible)
+    }
+
+    const onGalleryButtonPress = async () => {
+        try  {
+            console.log("onGalleryButtonPress pressed")
+        }
+        catch (err) {
+            console.log(err)
+        }
     }
 
     const onCameraButtonPress= async () => {
@@ -55,6 +64,19 @@ export default function SignUpImageAddScreen() {
         }
     }
 
+    const iterator = [
+        [
+            number= 1,
+            text="penis",
+            color='#fff'
+        ],
+        [
+            number= 2,
+            text="ballsacks",
+            color='#afb'
+        ]
+    ]
+    
     return(
         <View>
             <View className='bg-rose-700 h-full w-full'>
@@ -67,10 +89,46 @@ export default function SignUpImageAddScreen() {
                         Upload some pictures! 
                         </Animated.Text>
                     </View>
-                    <View className="flex items-center">
-                        <Avatar onButtonPress={() =>setModalVisible(true)}/>
-                    </View>
-                    {/* Upload Buttons */}
+
+                    {React.Children.toArray(
+                        iterator.map((item )=> (
+                            <View className="flex items-center">
+                                <Avatar id={item[0]} text={item[1]} color={item[2]} />      
+                                
+                            </View>)))}
+                 
+                </View>
+                
+            
+            </View>
+            
+
+        </View>
+    )
+}
+
+
+
+
+{/* <Modal isVisible={modalVisible}>
+                    <SafeAreaView>
+                        <Text>  Inside the Modal</Text>
+                        <TouchableOpacity
+                            onPress= {handleButtonPress}
+                        >
+                            <Icon
+                                iconStyle={tw`px-2 py-2`}
+                                name='camera-outline'
+                                type='ionicon'
+                                solid={true}
+                            >
+                                      </Icon> 
+                        </TouchableOpacity>
+                    </SafeAreaView>
+                </Modal> */}
+                
+
+{/* Upload Buttons */}
                     {/* <View className='flex items-center mx-4 space-y-4'> */}
                         {/* <View className="bg-orange-100 p-5 rounded-2x1 w-full"> */}
                             {/* Opens modal panel */}
@@ -90,33 +148,3 @@ export default function SignUpImageAddScreen() {
                             
                         {/* </View> */}
                     {/* </View> */}
-                </View>
-                {/* <Modal isVisible={modalVisible}>
-                    <SafeAreaView>
-                        <Text>  Inside the Modal</Text>
-                        <TouchableOpacity
-                            onPress= {handleButtonPress}
-                        >
-                            <Icon
-                                iconStyle={tw`px-2 py-2`}
-                                name='camera-outline'
-                                type='ionicon'
-                                solid={true}
-                            >
-                                      </Icon> 
-                        </TouchableOpacity>
-                    </SafeAreaView>
-                </Modal> */}
-            </View>
-            <FileUploadModal
-                modalVisible={modalVisible}
-                onBackPress={() => {
-                    setModalVisible(false);
-                }}
-                onCameraPress={() => uploadImage()}
-
-            
-            />
-        </View>
-    )
-}
