@@ -68,13 +68,23 @@ export default function SignUpImageAddScreen() {
         [
             number= 1,
             text="penis",
-            color='#fff'
+            color='#bbf'
         ],
         [
             number= 2,
             text="ballsacks",
             color='#afb'
-        ]
+        ],
+        [
+            number= 3,
+            text="meow",
+            color='#eac'
+        ],
+        [
+            number= 4,
+            text="uhn",
+            color='#ffb'
+        ],
     ]
     
     return(
@@ -90,13 +100,13 @@ export default function SignUpImageAddScreen() {
                         </Animated.Text>
                     </View>
 
-                    {React.Children.toArray(
+                    <View className="flex flex-wrap flex-row grid-cols-2">
+                        {React.Children.toArray(
                         iterator.map((item )=> (
-                            <View className="flex items-center">
                                 <Avatar id={item[0]} text={item[1]} color={item[2]} />      
                                 
-                            </View>)))}
-                 
+                            )))}
+                    </View>
                 </View>
                 
             
@@ -108,43 +118,3 @@ export default function SignUpImageAddScreen() {
 }
 
 
-
-
-{/* <Modal isVisible={modalVisible}>
-                    <SafeAreaView>
-                        <Text>  Inside the Modal</Text>
-                        <TouchableOpacity
-                            onPress= {handleButtonPress}
-                        >
-                            <Icon
-                                iconStyle={tw`px-2 py-2`}
-                                name='camera-outline'
-                                type='ionicon'
-                                solid={true}
-                            >
-                                      </Icon> 
-                        </TouchableOpacity>
-                    </SafeAreaView>
-                </Modal> */}
-                
-
-{/* Upload Buttons */}
-                    {/* <View className='flex items-center mx-4 space-y-4'> */}
-                        {/* <View className="bg-orange-100 p-5 rounded-2x1 w-full"> */}
-                            {/* Opens modal panel */}
-                            {/* <TouchableOpacity
-                                onPress= {handleButtonPress}
-                            >
-                                <Icon
-                                    iconStyle={tw`px-2 py-2`}
-                                    name='camera-outline'
-                                    type='ionicon'
-                                    solid={true}
-                                >
-
-                                </Icon> 
-                            </TouchableOpacity> */}
-                            {/* <FileUploadModal onButtonPress={() => setModalVisible(true)} /> */}
-                            
-                        {/* </View> */}
-                    {/* </View> */}

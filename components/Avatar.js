@@ -2,8 +2,8 @@ import React, {useState} from 'react'
 import {View, TouchableOpacity, StyleSheet} from 'react-native'
 import tw from 'twrnc'
 import {Icon} from 'react-native-elements'
-
 import FileUploadModal from '../components/fileUpload/fileUpload'
+import * as ImagePicker from "expo-image-picker"
 
 const Avatar = ({
   id,
@@ -17,36 +17,33 @@ const Avatar = ({
 
   const [modalVisible, setModalVisible] = useState(false);
   
+  const onGalleryButtonPress = async () => {
+      try  {
+          console.log("onGalleryButtonPress pressed")
+      }
+      catch (err) {
+          console.log(err)
+      }
+  }
+
   return(
-  <View className="flex items-center">
+  // <View className="flex items-center">
+  <View>
     {/* {console.log("key: " + key)} */}
     {!aviOnly && (
       <TouchableOpacity 
-        style={styles.editButton} 
-        onPress={() => {
-          setModalVisible(true)
-        }}
+        style={[styles.editButton, 
+          "flex-1 items-center"]} 
+        // onPress={() => {
+        //   setModalVisible(true)
+        // }}
+        onPress={() => console.log(props.text)}
       />
         
        
     
     )}
-    <FileUploadModal
-      id={id}
-      modalVisible={modalVisible}
-      onBackPress={() => {
-          setModalVisible(false);
-      }}
-      onRemovePress={() => {
-          setModalVisible(false);
-      }}
-      onGalleryPress={() => {
-          () => onGalleryButtonPress()
-      }}
-      onCameraPress={() => onCameraButtonPress()}
-      tecks={props.text}
-      color={props.color}
-    />   
+
   </View>
   )
 }
@@ -70,14 +67,29 @@ const styles = StyleSheet.create({
     // backgroundColor: colors.secondary,
     backgroundColor: "#fff",
     // borderRadius: 24,
-    padding: 20,
-    height: 90,
-    position: "absolute",
-    right: 5,
-    bottom: 5
+    padding: 5,
+    margin: 10,
+    height: 150,
+    width: 85, 
+    // position: "absolute",
+    // right: 5,
+    // bottom: 100 
   },
 });
 
-// const colors = StyleSheet.create({
-//     secondary: "#f82",
-// });
+    {/* <FileUploadModal
+      id={id}
+      modalVisible={modalVisible}
+      onBackPress={() => {
+          setModalVisible(false);
+      }}
+      onRemovePress={() => {
+          setModalVisible(false);
+      }}
+      onGalleryPress={() => {
+          () => onGalleryButtonPress()
+      }}
+      onCameraPress={() => onCameraButtonPress()}
+      tecks={props.text}
+      color={props.color}
+    />    */}

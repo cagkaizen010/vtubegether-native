@@ -12,13 +12,13 @@ const FileUploadModal = ({
     isLoading = true,
     ...props
 }) => {
-    console.log(props.color)
+    // console.log(props.color)
     return (
         <Modal animationType="slide" visible={modalVisible} transparent={true}>
             <Pressable style={styles.container} >
                 {/* {isLoading && <ActivityIndicator size={70} color={colors.tertiary} />} */}
                 {/* {isLoading && ( */}
-                    {console.log(props.color)}
+                    {/* {console.log(props.color)} */}
                     <View style={[styles.modalView, {
                         
                         backgroundColor: props.color
