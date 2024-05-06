@@ -1,4 +1,4 @@
-import { useNavigation} from '@react-navigation/native'
+import { useNavigation, useRoute} from '@react-navigation/native'
 import Animated, {FadeIn, FadeInUp, FadeInDown, FadeOut} from 'react-native-reanimated'
 import React from 'react'
 import { TextInput, KeyboardAvoidingView, TouchableOpacity, Icon, StyleSheet } from 'react-native'
@@ -7,28 +7,24 @@ import { supabase } from '../lib/helper/supabaseClient'
 import { signUpNewUser } from '../components/user/signUp'
 import tw from 'twrnc'
 
-let email = ''
-let username = ''
-let password = ''
-
-
 
 export default function SignupScreen() {
     const navigation = useNavigation();
 
-    [password, onChangePassword] = React.useState();
     [email, onChangeEmail] = React.useState();
+    [password, onChangePassword] = React.useState();
 
     const handleClickNext = () => {
+        signUpNewUser({
+            email, 
+            password, 
+        });   
         console.log("handleClickNext triggered")
-        navigation.push('SignUpAliasAdd')
-        // signUpNewUser({username, 
-        //     password, 
-        //     email
-        // });
+        navigation.push('SignUpAliasAdd' )
     }
-    // module.exports = {username, password, email};
+
     return (
+   
     <KeyboardAvoidingView  behavior='padding'>
         <View className='bg-rose-700 h-full w-full'>
             <StatusBar style="light"/>

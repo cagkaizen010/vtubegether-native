@@ -12,7 +12,6 @@ const FileUploadModal = ({
     isLoading = true,
     ...props
 }) => {
-    // console.log(props.color)
     return (
         <Modal animationType="slide" visible={modalVisible} transparent={true}>
             <Pressable style={styles.container} >

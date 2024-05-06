@@ -1,5 +1,5 @@
 import React, {useState} from 'react'
-import {View, TouchableOpacity, StyleSheet} from 'react-native'
+import {Text, View, TouchableOpacity, StyleSheet, ImageBackground} from 'react-native'
 import tw from 'twrnc'
 import {Icon} from 'react-native-elements'
 import FileUploadModal from '../components/fileUpload/fileUpload'
@@ -16,32 +16,54 @@ const Avatar = ({
 }) => {
 
   const [modalVisible, setModalVisible] = useState(false);
+  const [image, setImage] = useState();
   
   const onGalleryButtonPress = async () => {
       try  {
+        await ImagePicker.
+        requestMediaLibraryPermissionsAsync();
           console.log("onGalleryButtonPress pressed")
+        console.log("Gallery Access Granted")
+        let result = await ImagePicker.launchImageLibraryAsync();
+        if (!result.canceled) {
+          await saveImage(result.assets[0].uri)
+        }
       }
       catch (err) {
-          console.log(err)
+        alert ("Error uploading image: " + err.message);
       }
+  }
+  const saveImage = async (image) => {
+    try {
+      console.log("Image data: " + image);
+      setImage(image);
+    }
+    catch (error) {
+      throw error;
+    }
   }
 
   return(
-  // <View className="flex items-center">
   <View>
-    {/* {console.log("key: " + key)} */}
     {!aviOnly && (
       <TouchableOpacity 
-        style={[styles.editButton, 
+        style={[!image && styles.editButton, 
           "flex-1 items-center"]} 
-        // onPress={() => {
-        //   setModalVisible(true)
-        // }}
-        onPress={() => console.log(props.text)}
-      />
+        onPress={() => onGalleryButtonPress()}
+
+      >
+
+        {image && <ImageBackground
+        source={{
+          uri: image
+          }}
+        style={[styles.editButton,
+          "flex-1 items-center"]}
+        >
+        </ImageBackground>}
+      </TouchableOpacity>
         
        
-    
     )}
 
   </View>
@@ -59,37 +81,17 @@ const styles = StyleSheet.create({
     borderRadius: 75,
     width: 150,
     height: 150,
-    // borderColor: colors.secondary,
     borderColor: "#f82",
     borderWidth: 5,
   },
   editButton: {
-    // backgroundColor: colors.secondary,
-    backgroundColor: "#fff",
-    // borderRadius: 24,
+    backgroundColor: "#aef",
     padding: 5,
     margin: 10,
     height: 150,
     width: 85, 
-    // position: "absolute",
-    // right: 5,
-    // bottom: 100 
+     
   },
 });
 
-    {/* <FileUploadModal
-      id={id}
-      modalVisible={modalVisible}
-      onBackPress={() => {
-          setModalVisible(false);
-      }}
-      onRemovePress={() => {
-          setModalVisible(false);
-      }}
-      onGalleryPress={() => {
-          () => onGalleryButtonPress()
-      }}
-      onCameraPress={() => onCameraButtonPress()}
-      tecks={props.text}
-      color={props.color}
-    />    */}
+    

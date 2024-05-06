@@ -1,6 +1,6 @@
 import React, {useState} from 'react'
 import Animated, {FadeIn, FadeInUp, FadeInDown, FadeOut} from 'react-native-reanimated'
-import { Image, Modal, SafeAreaView, Text, StatusBar, View, TouchableOpacity } from 'react-native'
+import { Image, Modal, SafeAreaView, Text, StatusBar, View, StyleSheet, TouchableOpacity } from 'react-native'
 import { useNavigation } from '@react-navigation/native';
 import {Icon} from 'react-native-elements'
 import * as ImagePicker from 'expo-image-picker'
@@ -8,28 +8,21 @@ import tw from 'twrnc'
 import FileUploadModal from '../components/fileUpload/fileUpload'
 import Avatar from '../components/Avatar';
 
+import {email, password } from './SignupScreen';
+import {alias} from "./SignUpAliasAddScreen";
+// import {}
+
 export default function SignUpImageAddScreen() {
     const navigation = useNavigation();
     const [modalVisible, setModalVisible] = useState(false)
 
-    // const handleButtonPress= async () => {
-    //     console.log("inside handleButtonPress")
-    //     fileUploadModal()
-    // }
 
     const handleButtonPress = () => {
         console.log("modalVisible: " + modalVisible)
         setModalVisible(() => !modalVisible)
+        
     }
 
-    const onGalleryButtonPress = async () => {
-        try  {
-            console.log("onGalleryButtonPress pressed")
-        }
-        catch (err) {
-            console.log(err)
-        }
-    }
 
     const onCameraButtonPress= async () => {
         try {
@@ -45,8 +38,6 @@ export default function SignUpImageAddScreen() {
                 });
             
             if (!result.canceled) {
-                // save image
-                // paused @ 3:10
             }               
 
         } catch(err) {
@@ -63,6 +54,13 @@ export default function SignUpImageAddScreen() {
             throw(error)
         }
     }
+
+    console.log("email inside SignUpImageAddScreen: " + email)
+    const createProfile = () => {
+
+        console.log(password, email, alias);
+      
+    } 
 
     const iterator = [
         [
@@ -101,12 +99,29 @@ export default function SignUpImageAddScreen() {
                     </View>
 
                     <View className="flex flex-wrap flex-row grid-cols-2">
-                        {React.Children.toArray(
-                        iterator.map((item )=> (
-                                <Avatar id={item[0]} text={item[1]} color={item[2]} />      
-                                
-                            )))}
+                        {React.Children.toArray(iterator.map((item )=> (
+                            <Avatar 
+                                id={item[0]} 
+                                text={item[1]} 
+                                color={item[2]} 
+                            />      
+                        )))}
+
+                        
                     </View>
+                    <View
+                        style= {[styles.submitButton,
+                           "" 
+                        ]}
+                    >
+                        <TouchableOpacity
+                            // onPress={() => {console.log("Images Submitted")}}
+                            onPress={createProfile}
+                            
+                        >
+                            <Text style={styles.submitText}>Submit</Text>
+                        </TouchableOpacity>
+                    </View>   
                 </View>
                 
             
@@ -116,5 +131,20 @@ export default function SignUpImageAddScreen() {
         </View>
     )
 }
+
+const styles = StyleSheet.create({
+    submitButton: {
+        backgroundColor: "#fff",
+        padding: 10,
+        margin:100,
+        marginLeft:125,
+        marginRight:125,
+    },
+    submitText: {
+        textAlign:'center',
+        fontWeight: "bold",
+
+    }
+});
 
 
