@@ -1,7 +1,7 @@
 import { useNavigation} from '@react-navigation/native'
 import Animated, {FadeIn, FadeInUp, FadeInDown, FadeOut} from 'react-native-reanimated'
 import React from 'react'
-import { KeyboardAvoidingView, TextInput, TouchableOpacity } from 'react-native'
+import { Alert, KeyboardAvoidingView, TextInput, TouchableOpacity } from 'react-native'
 import {View, Image, StatusBar, Text} from 'react-native'
 import { supabase } from '../lib/helper/supabaseClient'
 import { makeRedirectUri } from 'expo-auth-session'
@@ -10,10 +10,8 @@ import * as WebBrowser from "expo-web-browser"
 import * as Linking from "expo-linking"
 
 const redirectTo = makeRedirectUri();
-let username = '';
 let email = '';
 let password = '';
-let authSuccess;
 let globalAccessToken;
 
 
@@ -39,14 +37,29 @@ const signInWithEmail = async () => {
         email: email,
         password: password,
     })
-    if (error) throw error;
+    if (error){
+        console.log(error)
+        throw error
+    }
 
-    console.log("data: " + JSON.stringify(data, null, 1));
+    // console.log("data: " + JSON.stringify(data, null, 1));
+    getSession();
+
+    // console.log('xxxxxxxxxxxxxxxx')
+    // getSession();
+
     // if (data.user.aud == 'authenticated') authSuccess = true
     
 }
 
-
+const getSession = async () => {
+    const {data, error} = await supabase.auth.getSession();
+    if (error) {
+        console.log(error)
+        throw error
+    }
+    console.log("DATA AFTER GETSESSION(): " + JSON.stringify(data.session.user.user_metadata, null, 1))
+}
 const performOAuthGoogle = async () => {
     const {data, error} = await supabase.auth.signInWithOAuth({
             provider: 'google',
@@ -133,7 +146,8 @@ export default function LoginScreen() {
         // handle initial session
         } else if (event === 'SIGNED_IN') {
             // console.log("Inside SIGNED_IN");
-            navigation.push('Swipe')
+            session.user.user_metadata.alias && navigation.push('Swipe') 
+            navigation.push('SignUpAliasAdd')
             // handle sign in event
         } else if (event === 'SIGNED_OUT') {
             console.log("Inside SIGNED_OUT");
@@ -146,6 +160,7 @@ export default function LoginScreen() {
             // handle token refreshed event
         } else if (event === 'USER_UPDATED') {
             console.log("Inside USER_UPDATED");
+            getSession();
             // handle user updated event
         }
     })

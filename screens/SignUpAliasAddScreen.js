@@ -8,24 +8,44 @@ import tw from 'twrnc';
 import fileUploadModal from '../components/fileUpload/fileUpload'
 import {email, password} from './SignupScreen'
 
-export default function SignUpAliasAddScreen() {
+export default function SignUpAliasAddScreen({route}) {
     const navigation = useNavigation();
     
-
+    const email = route.params;
     [alias, onChangeAlias] = React.useState();
 
     const handleClickNext = () => {
-        console.log("handleClickNext Triggered")
-        console.log(email)
+        console.log("handleClickNext Triggered in SignUpAliasAddScreen()")
+        console.log("email in SignUpAliasAddScreen(): " + JSON.stringify(email))
         // var attrs = new UserAttributes { Email = "new-email@example.com" };
+
+        // getSession();
+
         const {data, error} = supabase.auth.updateUser({
             data: {alias: this.alias}
         })
-        if (error) throw error
+        if (error){
+            console.log(error)
+            throw error;
+        } 
         
-        navigation.push('SignUpImageAdd' )
+
+        navigation.navigate('SignUpImageAdd',{
+            email,
+            alias,
+        })
     }
-    module.export = {alias}
+
+    const getSession = async () => {
+
+        const {data, error} = await supabase.auth.getSession();
+        if (error) {
+            console.log(error)
+            throw error
+        }
+        console.log("DATA AFTER GETSESSION(): " + JSON.stringify(data, null, 1))
+    }
+
     return (
         <KeyboardAvoidingView behavior='padding'>
             <View className='bg-rose-700 h-full w-full'>

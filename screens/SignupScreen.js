@@ -13,15 +13,39 @@ export default function SignupScreen() {
 
     [email, onChangeEmail] = React.useState();
     [password, onChangePassword] = React.useState();
+    
 
-    const handleClickNext = () => {
+    const handleClickNext = async () => {
+        console.log("handleClickNext triggered in SignUpScreen()")
+
         signUpNewUser({
             email, 
             password, 
-        });   
-        console.log("handleClickNext triggered")
-        navigation.push('SignUpAliasAdd' )
+        }); 
+
+        // getSession();
+
+        navigation.navigate('SignUpAliasAdd', {
+            email, 
+        })
+        // const {data, error} = await supabase.auth.admin.getUserById();
     }
+    // const getSession = async () => {
+    //     console.log("Inside getSession")
+    //     const {
+    //         data: {
+    //             user 
+    //         },
+    //         error
+    //     } = await supabase.auth.getUser();
+    //     if (error) {
+    //         console.log("getUser ERROR! : " + error)
+    //         throw error
+    //     }
+    //     console.log("data: " + data);
+    //     console.log("user: " + user);
+    // }
+
 
     return (
    

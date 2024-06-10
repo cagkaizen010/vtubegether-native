@@ -29,7 +29,7 @@ function App({navigation}) {
                 <Stack.Screen name="Inbox" component={InboxScreen} />
               </> 
               }
-
+              
               <Stack.Screen name="Swipe" component={SwipeScreen} options={{gestureDirection: 'horizontal-inverted'}}/>
         </Stack.Navigator>
       </NavigationContainer>

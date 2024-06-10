@@ -8,13 +8,21 @@ import { supabase } from '../../lib/helper/supabaseClient'
 //     console.log(user.aud);
 //     return user.aud;
 // }
-
+const getSession = async () => {
+    const {data, error} = await supabase.auth.getSession();
+    if (error) {
+        console.log(error)
+        throw error
+    }
+    console.log("DATA AFTER GETSESSION(): " + JSON.stringify(data.session.user.user_metadata, null, 1))
+}
 
 async function signUpNewUser(props) {
     // console.log("user: " + props.username);
     // console.log("email: " + props.email);
     // console.log("pass: " + props.password);
 
+    
     const {data, error} = await supabase.auth.signUp({
         email: props.email,
         password: props.password,
@@ -28,13 +36,12 @@ async function signUpNewUser(props) {
         console.log(error)
         throw error
     }
-    console.log("outputting data:" + data)
-    // getUserData()
-
-    // console.log('email: '+ user.data.email);
-    // console.log("username: " + user.data.username);
-    // console.log('password: ' + user.data.password);
     
+    // console.log(JSON.stringify(data, null, 1));
+    getSession();       
+    // const {data: user} = await supabase.auth.getUser();
+    
+   
 }
 
 export {signUpNewUser}

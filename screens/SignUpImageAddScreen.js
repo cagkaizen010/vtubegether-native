@@ -1,7 +1,7 @@
 import React, {useState} from 'react'
 import Animated, {FadeIn, FadeInUp, FadeInDown, FadeOut} from 'react-native-reanimated'
 import { Image, Modal, SafeAreaView, Text, StatusBar, View, StyleSheet, TouchableOpacity } from 'react-native'
-import { useNavigation } from '@react-navigation/native';
+import { useRoute, useNavigation } from '@react-navigation/native';
 import {Icon} from 'react-native-elements'
 import * as ImagePicker from 'expo-image-picker'
 import tw from 'twrnc'
@@ -12,75 +12,100 @@ import {email, password } from './SignupScreen';
 import {alias} from "./SignUpAliasAddScreen";
 // import {}
 
-export default function SignUpImageAddScreen() {
+export default function SignUpImageAddScreen({route}) {
+    
     const navigation = useNavigation();
     const [modalVisible, setModalVisible] = useState(false)
+    const {email, alias} = route.params;
 
+        // Toggle modal visibility
+    // const handleButtonPress = () => {
+    //     console.log("modalVisible: " + modalVisible)
+    //     setModalVisible(() => !modalVisible)
+    // }
 
-    const handleButtonPress = () => {
-        console.log("modalVisible: " + modalVisible)
-        setModalVisible(() => !modalVisible)
-        
-    }
+        // Toggle Camera Access
+    // const onCameraButtonPress= async () => {
+    //     try {
 
-
-    const onCameraButtonPress= async () => {
-        try {
-
-            await ImagePicker.
-            requestCameraPermissionsAsync();
-            console.log("Camera Access Granted?")
-            let result = await ImagePicker.launchCameraAsync({
-                    cameraType: ImagePicker.CameraType.front,
-                    allowsEditing: true,
-                    aspect: [1,1],
-                    quality: 1,
-                });
+    //         await ImagePicker.
+    //         requestCameraPermissionsAsync();
+    //         console.log("Camera Access Granted?")
+    //         let result = await ImagePicker.launchCameraAsync({
+    //                 cameraType: ImagePicker.CameraType.front,
+    //                 allowsEditing: true,
+    //                 aspect: [1,1],
+    //                 quality: 1,
+    //             });
             
-            if (!result.canceled) {
-            }               
+    //         if (!result.canceled) {
+    //         }               
 
-        } catch(err) {
+    //     } catch(err) {
+    //         console.log(err)
+    //     }
+    // }
+
+
+    // Sending image to be uploaded to database
+    // Has to be here to upload to image array
+
+    const sendToBackend = async () => {
+        try {
+            const formData = new FormData();
+            
+            formData.append("image", {
+                uri: image,
+                type: "image/png",
+                name: "profile-image"
+            })
+
+            const config = {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+                transformRequest: () => {
+                    return formData;
+                },
+            }
+
+            await axios.post("https://you-api-endpoint", formData, config)
+
+            alert("success");
+        }
+        catch (err) {
             console.log(err)
         }
     }
 
-    const saveImage = async (image) => {
-        try {
-            setImage(image);
-            setModalVisible(false);
-        }
-        catch (error) {
-            throw(error)
-        }
-    }
-
-    console.log("email inside SignUpImageAddScreen: " + email)
+    // console.log("email inside SignUpImageAddScreen: " + email)
+    console.log("email: " + JSON.stringify(email))
+    console.log("alias: " + JSON.stringify(alias))
     const createProfile = () => {
 
-        console.log(password, email, alias);
+        console.log(iterator[2], email, alias);
       
     } 
 
     const iterator = [
         [
             number= 1,
-            text="penis",
+            image="",
             color='#bbf'
         ],
         [
             number= 2,
-            text="ballsacks",
+            image="",
             color='#afb'
         ],
         [
             number= 3,
-            text="meow",
+            image="",
             color='#eac'
         ],
         [
             number= 4,
-            text="uhn",
+            image="",
             color='#ffb'
         ],
     ]
@@ -102,16 +127,12 @@ export default function SignUpImageAddScreen() {
                         {React.Children.toArray(iterator.map((item )=> (
                             <Avatar 
                                 id={item[0]} 
-                                text={item[1]} 
+                                uri={item[1]} 
                                 color={item[2]} 
                             />      
                         )))}
-
-                        
-                    </View>
                     <View
-                        style= {[styles.submitButton,
-                           "" 
+                        style= {[styles.submitButton
                         ]}
                     >
                         <TouchableOpacity
@@ -121,7 +142,10 @@ export default function SignUpImageAddScreen() {
                         >
                             <Text style={styles.submitText}>Submit</Text>
                         </TouchableOpacity>
-                    </View>   
+                    </View>
+                        
+                    </View>
+                       
                 </View>
                 
             

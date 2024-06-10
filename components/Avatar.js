@@ -24,7 +24,15 @@ const Avatar = ({
         requestMediaLibraryPermissionsAsync();
           console.log("onGalleryButtonPress pressed")
         console.log("Gallery Access Granted")
-        let result = await ImagePicker.launchImageLibraryAsync();
+
+        let result = await ImagePicker.launchImageLibraryAsync({
+          mediaTypes: ImagePicker.MediaTypeOptions.
+          Images,
+          allowsEditing: true,
+          aspect: [1, 1],
+          quality: 1, 
+        });
+
         if (!result.canceled) {
           await saveImage(result.assets[0].uri)
         }
@@ -33,6 +41,7 @@ const Avatar = ({
         alert ("Error uploading image: " + err.message);
       }
   }
+
   const saveImage = async (image) => {
     try {
       console.log("Image data: " + image);
@@ -54,12 +63,12 @@ const Avatar = ({
       >
 
         {image && <ImageBackground
-        source={{
-          uri: image
-          }}
-        style={[styles.editButton,
-          "flex-1 items-center"]}
-        >
+          source={{
+            uri: image
+            }}
+          style={[styles.editButton,
+            "flex-1 items-center"]}
+          >
         </ImageBackground>}
       </TouchableOpacity>
         
@@ -67,10 +76,13 @@ const Avatar = ({
     )}
 
   </View>
+  // ,
+  // image
   )
 }
 
-export default Avatar
+export default Avatar;
+// export image;
 
 const styles = StyleSheet.create({
   container: {
