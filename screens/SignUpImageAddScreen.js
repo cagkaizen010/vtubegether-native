@@ -17,7 +17,44 @@ export default function SignUpImageAddScreen({route}) {
     const navigation = useNavigation();
     const [modalVisible, setModalVisible] = useState(false)
     const {email, alias} = route.params;
+    const [image, setImage] = useState();
 
+    const onGalleryButtonPress = async () => {
+      try  {
+        console.log("in onGalleryButtonPress")
+        await ImagePicker.
+        requestMediaLibraryPermissionsAsync();
+          console.log("onGalleryButtonPress pressed")
+        console.log("Gallery Access Granted")
+
+        let result = await ImagePicker.launchImageLibraryAsync({
+          mediaTypes: ImagePicker.MediaTypeOptions.
+          Images,
+          allowsEditing: true,
+          aspect: [1, 1],
+          quality: 1, 
+        });
+
+        uri = result
+
+        if (!result.canceled) {
+          await saveImage(result.assets[0].uri)
+        }
+      }
+      catch (err) {
+        console.log("Error uploading image: " + err.message);
+      }
+    }
+  
+    const saveImage = async (image) => {
+      try {
+        console.log("Image data: " + image);
+        setImage(image);
+      }
+      catch (error) {
+        throw error;
+      }
+    }
         // Toggle modal visibility
     // const handleButtonPress = () => {
     //     console.log("modalVisible: " + modalVisible)
@@ -45,6 +82,8 @@ export default function SignUpImageAddScreen({route}) {
     //         console.log(err)
     //     }
     // }
+
+
 
 
     // Sending image to be uploaded to database
@@ -83,32 +122,10 @@ export default function SignUpImageAddScreen({route}) {
     console.log("alias: " + JSON.stringify(alias))
     const createProfile = () => {
 
-        console.log(iterator[2], email, alias);
+        console.log(email, alias);
       
     } 
 
-    const iterator = [
-        [
-            number= 1,
-            image="",
-            color='#bbf'
-        ],
-        [
-            number= 2,
-            image="",
-            color='#afb'
-        ],
-        [
-            number= 3,
-            image="",
-            color='#eac'
-        ],
-        [
-            number= 4,
-            image="",
-            color='#ffb'
-        ],
-    ]
     
     return(
         <View>
@@ -124,25 +141,20 @@ export default function SignUpImageAddScreen({route}) {
                     </View>
 
                     <View className="flex flex-wrap flex-row grid-cols-2">
-                        {React.Children.toArray(iterator.map((item )=> (
-                            <Avatar 
-                                id={item[0]} 
-                                uri={item[1]} 
-                                color={item[2]} 
-                            />      
-                        )))}
-                    <View
-                        style= {[styles.submitButton
-                        ]}
-                    >
-                        <TouchableOpacity
-                            // onPress={() => {console.log("Images Submitted")}}
-                            onPress={createProfile}
-                            
-                        >
-                            <Text style={styles.submitText}>Submit</Text>
-                        </TouchableOpacity>
-                    </View>
+                        <Avatar 
+                        image={image}
+                        onPress={() => onGalleryButtonPress} 
+                        />
+
+
+                        <View style= {styles.submitButton}>
+                            <TouchableOpacity
+                                // onPress={() => {console.log("Images Submitted")}}
+                                onPress={createProfile}
+                            >
+                                <Text style={styles.submitText}>Submit</Text>
+                            </TouchableOpacity>
+                        </View>
                         
                     </View>
                        

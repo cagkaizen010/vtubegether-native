@@ -146,7 +146,7 @@ export default function LoginScreen() {
         // handle initial session
         } else if (event === 'SIGNED_IN') {
             // console.log("Inside SIGNED_IN");
-            session.user.user_metadata.alias && navigation.push('Swipe') 
+            session.user.user_metadata && navigation.push('Swipe') 
             navigation.push('SignUpAliasAdd')
             // handle sign in event
         } else if (event === 'SIGNED_OUT') {
