@@ -7,9 +7,11 @@ import * as ImagePicker from 'expo-image-picker'
 import tw from 'twrnc'
 import FileUploadModal from '../components/fileUpload/fileUpload'
 import Avatar from '../components/Avatar';
+import axios from 'axios';
 
 import {email, password } from './SignupScreen';
 import {alias} from "./SignUpAliasAddScreen";
+import { supabase } from '../lib/helper/supabaseClient';
 // import {}
 
 export default function SignUpImageAddScreen({route}) {
@@ -89,10 +91,11 @@ export default function SignUpImageAddScreen({route}) {
     // Sending image to be uploaded to database
     // Has to be here to upload to image array
 
-    const sendToBackend = async () => {
+    const sendToBackend = async (email, alias, url) => {
         try {
             const formData = new FormData();
-            
+            formData.append("email", email)
+            formData.append("alias", alias)
             formData.append("image", {
                 uri: image,
                 type: "image/png",
@@ -108,8 +111,9 @@ export default function SignUpImageAddScreen({route}) {
                 },
             }
 
-            await axios.post("https://you-api-endpoint", formData, config)
+            await axios.post("https://ebxacdswxrfgprupexon.supabase.co", formData, config)
 
+            // await axios.post(process.env.REACT_APP_SUPABASE_URL, formData, config)
             alert("success");
         }
         catch (err) {
@@ -118,13 +122,48 @@ export default function SignUpImageAddScreen({route}) {
     }
 
     // console.log("email inside SignUpImageAddScreen: " + email)
-    console.log("email: " + JSON.stringify(email))
-    console.log("alias: " + JSON.stringify(alias))
-    const createProfile = () => {
+    const createProfile = async () => {
+        
+        console.log("rooty tooty ranhanhe");
 
-        console.log(email, alias);
-      
+        // const {data, error} = await supabase.auth.getSession();
+        // if (error) {
+        //     console.log(error);
+        //     throw error
+        // }
+
+        const {data, error} = await supabase.auth.updateUser({
+            data: {image: image}
+        })
+        if (error) {
+            console.log(error)
+            throw error;
+        }
+
+
+        // sendToBackend(
+        //     JSON.stringify(data.session.user.user_metadata.email),
+        //     JSON.stringify(data.session.user.user_metadata.alias),
+        //     image
+        // )
+
+        // console.log(JSON.stringify(data,null,1))
+        outputData(
+            JSON.stringify(data.session.user.user_metadata.email),
+            JSON.stringify(data.session.user.user_metadata.alias),
+            JSON.stringify(data.session.user.user_metadata.image),
+        )
+        // console.log("email: " + JSON.stringify(data.session.user.user_metadata.email))
+        // console.log("alias: " + JSON.stringify(data.session.user.user_metadata.alias))
+        // console.log("image URL: " + image)
     } 
+
+    const outputData = async (email, alias, url) => {
+        console.log("-----------------------")
+        console.log( email)
+        console.log( alias)
+        console.log(url)
+    }
 
     
     return(
