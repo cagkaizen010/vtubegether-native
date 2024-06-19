@@ -6,6 +6,7 @@ import SignupScreen from './screens/SignupScreen.js';
 import MessagesScreen from "./screens/MessagesScreen.js";
 import SignUpAliasAddScreen from './screens/SignUpAliasAddScreen';
 import SignUpImageAddScreen from './screens/SignUpImageAddScreen.js';
+import SignUpConfirmScreen from "./screens/SignUpConfirmScreen.js";
 import InboxScreen from "./screens/Inbox.js"
 import LoginScreen, {authSuccess, globalAccessToken}  from './screens/LoginScreen.js'
 import * as SecureStore from 'expo-secure-store'
@@ -27,6 +28,7 @@ function App({navigation}) {
                 <Stack.Screen name="SignUpImageAdd" component={SignUpImageAddScreen}/>
                 <Stack.Screen name="Messages" component={MessagesScreen} />
                 <Stack.Screen name="Inbox" component={InboxScreen} />
+                <Stack.Screen name="SignUpConfirm" component={SignUpConfirmScreen} />
               </> 
               }
               

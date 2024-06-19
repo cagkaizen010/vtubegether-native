@@ -6,6 +6,7 @@ import {View, Image, StatusBar, Text} from 'react-native'
 import { supabase } from '../lib/helper/supabaseClient'
 import { signUpNewUser } from '../components/user/signUp'
 import tw from 'twrnc'
+import LoginScreen from './LoginScreen'
 
 
 export default function SignupScreen() {
@@ -13,7 +14,6 @@ export default function SignupScreen() {
 
     [email, onChangeEmail] = React.useState();
     [password, onChangePassword] = React.useState();
-    
 
     const handleClickNext = async () => {
         console.log("handleClickNext triggered in SignUpScreen()")
@@ -23,28 +23,9 @@ export default function SignupScreen() {
             password, 
         }); 
 
-        // getSession();
 
-        navigation.navigate('SignUpAliasAdd', {
-            email, 
-        })
-        // const {data, error} = await supabase.auth.admin.getUserById();
+        navigation.navigate("Login")
     }
-    // const getSession = async () => {
-    //     console.log("Inside getSession")
-    //     const {
-    //         data: {
-    //             user 
-    //         },
-    //         error
-    //     } = await supabase.auth.getUser();
-    //     if (error) {
-    //         console.log("getUser ERROR! : " + error)
-    //         throw error
-    //     }
-    //     console.log("data: " + data);
-    //     console.log("user: " + user);
-    // }
 
 
     return (

@@ -7,7 +7,6 @@ import * as ImagePicker from 'expo-image-picker'
 import tw from 'twrnc'
 import FileUploadModal from '../components/fileUpload/fileUpload'
 import Avatar from '../components/Avatar';
-import axios from 'axios';
 
 import {email, password } from './SignupScreen';
 import {alias} from "./SignUpAliasAddScreen";
@@ -17,8 +16,7 @@ import { supabase } from '../lib/helper/supabaseClient';
 export default function SignUpImageAddScreen({route}) {
     
     const navigation = useNavigation();
-    const [modalVisible, setModalVisible] = useState(false)
-    const {email, alias} = route.params;
+    // const [modalVisible, setModalVisible] = useState(false)
     const [image, setImage] = useState();
 
     const onGalleryButtonPress = async () => {
@@ -57,82 +55,13 @@ export default function SignUpImageAddScreen({route}) {
         throw error;
       }
     }
-        // Toggle modal visibility
-    // const handleButtonPress = () => {
-    //     console.log("modalVisible: " + modalVisible)
-    //     setModalVisible(() => !modalVisible)
-    // }
 
-        // Toggle Camera Access
-    // const onCameraButtonPress= async () => {
-    //     try {
-
-    //         await ImagePicker.
-    //         requestCameraPermissionsAsync();
-    //         console.log("Camera Access Granted?")
-    //         let result = await ImagePicker.launchCameraAsync({
-    //                 cameraType: ImagePicker.CameraType.front,
-    //                 allowsEditing: true,
-    //                 aspect: [1,1],
-    //                 quality: 1,
-    //             });
-            
-    //         if (!result.canceled) {
-    //         }               
-
-    //     } catch(err) {
-    //         console.log(err)
-    //     }
-    // }
-
-
-
-
-    // Sending image to be uploaded to database
-    // Has to be here to upload to image array
-
-    const sendToBackend = async (email, alias, url) => {
-        try {
-            const formData = new FormData();
-            formData.append("email", email)
-            formData.append("alias", alias)
-            formData.append("image", {
-                uri: image,
-                type: "image/png",
-                name: "profile-image"
-            })
-
-            const config = {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                },
-                transformRequest: () => {
-                    return formData;
-                },
-            }
-
-            await axios.post("https://ebxacdswxrfgprupexon.supabase.co", formData, config)
-
-            // await axios.post(process.env.REACT_APP_SUPABASE_URL, formData, config)
-            alert("success");
-        }
-        catch (err) {
-            console.log(err)
-        }
-    }
 
     // console.log("email inside SignUpImageAddScreen: " + email)
     const createProfile = async () => {
         
-        console.log("rooty tooty ranhanhe");
 
-        // const {data, error} = await supabase.auth.getSession();
-        // if (error) {
-        //     console.log(error);
-        //     throw error
-        // }
-
-        const {data, error} = await supabase.auth.updateUser({
+              const {data, error} = await supabase.auth.updateUser({
             data: {image: image}
         })
         if (error) {
@@ -141,21 +70,15 @@ export default function SignUpImageAddScreen({route}) {
         }
 
 
-        // sendToBackend(
-        //     JSON.stringify(data.session.user.user_metadata.email),
-        //     JSON.stringify(data.session.user.user_metadata.alias),
-        //     image
-        // )
+      
 
         // console.log(JSON.stringify(data,null,1))
-        outputData(
-            JSON.stringify(data.session.user.user_metadata.email),
-            JSON.stringify(data.session.user.user_metadata.alias),
-            JSON.stringify(data.session.user.user_metadata.image),
-        )
-        // console.log("email: " + JSON.stringify(data.session.user.user_metadata.email))
-        // console.log("alias: " + JSON.stringify(data.session.user.user_metadata.alias))
-        // console.log("image URL: " + image)
+        // outputData(
+        //     JSON.stringify(data.session.user.user_metadata.email),
+        //     JSON.stringify(data.session.user.user_metadata.alias),
+        //     JSON.stringify(data.session.user.user_metadata.image),
+        // )
+        navigation.push("SignUpConfirm")
     } 
 
     const outputData = async (email, alias, url) => {

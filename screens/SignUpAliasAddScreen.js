@@ -16,10 +16,7 @@ export default function SignUpAliasAddScreen({route}) {
 
     const handleClickNext = () => {
         console.log("handleClickNext Triggered in SignUpAliasAddScreen()")
-        console.log("email in SignUpAliasAddScreen(): " + JSON.stringify(email))
-        // var attrs = new UserAttributes { Email = "new-email@example.com" };
 
-        // getSession();
 
         const {data, error} = supabase.auth.updateUser({
             data: {alias: this.alias}
@@ -36,15 +33,7 @@ export default function SignUpAliasAddScreen({route}) {
         })
     }
 
-    const getSession = async () => {
-
-        const {data, error} = await supabase.auth.getSession();
-        if (error) {
-            console.log(error)
-            throw error
-        }
-        console.log("DATA AFTER GETSESSION(): " + JSON.stringify(data, null, 1))
-    }
+  
 
     return (
         <KeyboardAvoidingView behavior='padding'>

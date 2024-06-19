@@ -12,7 +12,6 @@ import * as Linking from "expo-linking"
 const redirectTo = makeRedirectUri();
 let email = '';
 let password = '';
-let globalAccessToken;
 
 
 const createSessionFromUrl = async (url) => {
@@ -142,12 +141,18 @@ export default function LoginScreen() {
         // console.log(event, session)
 
         if (event === 'INITIAL_SESSION') {
-            console.log("---");
+            // console.log("---");
         // handle initial session
         } else if (event === 'SIGNED_IN') {
             // console.log("Inside SIGNED_IN");
-            session.user.user_metadata && navigation.push('Swipe') 
-            navigation.push('SignUpAliasAdd')
+            // console.log("flag: " + (JSON.stringify(session.user.user_metadata) && navigation.push('Swipe')) )
+
+            if (!JSON.stringify(session.user.user_metadata.image)){
+                if(!JSON.stringify(session.user.user_metadata.alias))
+                    navigation.push('SignUpAliasAdd')
+                else navigation.push('SignUpImageAdd')
+            }
+            else navigation.push('SignUpConfirm')
             // handle sign in event
         } else if (event === 'SIGNED_OUT') {
             console.log("Inside SIGNED_OUT");
