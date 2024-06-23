@@ -57,7 +57,7 @@ const getSession = async () => {
         console.log(error)
         throw error
     }
-    console.log("DATA AFTER GETSESSION(): " + JSON.stringify(data.session.user.user_metadata, null, 1))
+    // console.log("DATA AFTER GETSESSION(): " + JSON.stringify(data.session.user.user_metadata, null, 1))
 }
 const performOAuthGoogle = async () => {
     const {data, error} = await supabase.auth.signInWithOAuth({
