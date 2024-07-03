@@ -153,6 +153,8 @@ export default function LoginScreen() {
                 else navigation.push('SignUpImageAdd')
             }
             else navigation.push('SignUpConfirm')
+            // else navigation.push('Swipe')
+
             // handle sign in event
         } else if (event === 'SIGNED_OUT') {
             console.log("Inside SIGNED_OUT");
