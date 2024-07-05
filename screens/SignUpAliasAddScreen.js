@@ -25,7 +25,6 @@ export default function SignUpAliasAddScreen({route}) {
             console.log(error)
             throw error;
         } 
-        
 
         navigation.navigate('SignUpImageAdd',{
             email,

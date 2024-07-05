@@ -3,20 +3,16 @@ import {useNavigation, useRoute} from '@react-navigation/native'
 import {View, Text, StatusBar, Image} from 'react-native'
 import { supabase } from '../lib/helper/supabaseClient';
 import { Button } from 'react-native-elements';
+import {decode} from 'base64-arraybuffer'
 
 export default function SignUpConfirmScreen() {
     useEffect(() => {
-        // getImage();
-        console.log("BEFORE UPDATE! metadata.alias: " + alias);
-        console.log("BEFORE UPDATE! metadata.email: " + email);
-        console.log("BEFORE UPDATE! metadata.image: " + imageURL);
         onAuthStateChange();
-        outputUpdatedValues();
+
     }, [])
+
     const [alias, onChangeAlias] = useState(null)
     const [email, onChangeEmail] = useState(null)
-    // const [imageURL, onChangeImageURL] = useState(null);
-      
     const [imageURL, onChangeImageURL] = useState(null);
 
     
@@ -31,6 +27,43 @@ export default function SignUpConfirmScreen() {
         // console.log("AFTER UPDATE! metadata.alias: " + alias);
         // console.log("AFTER UPDATE! metadata.email: " + email);
         // console.log("AFTER UPDATE! metadata.image: " + imageURL);
+    }
+
+    const buttonFunction = async () => {
+        const {data: Profile, error } = await supabase
+           .from('Profile')
+           .insert([
+               {
+                   alias: alias,
+                   email: email,
+                   image: imageURL
+               }
+           ])
+           if (error){
+            console.log(error)
+            throw error
+           }
+           else console.log("Data Upload Successful")
+
+           uploadImage();
+    }
+
+    const uploadImage = async () => {
+        console.log("Uploading image")
+        const {data, error} = await supabase.storage
+        .from('images')
+        // .upload(`avatar_${alias}`, imageURL, {
+        //     contentType: 'image/gif',
+        // })
+        .upload(imageURL, decode('base64FileData'), {
+            contentType: 'image/jpeg'
+        })
+        // showOverlay.value = false
+        if (error) {
+            console.log(error)
+            throw error
+        }
+        else console.log("Image Upload Successful")
     }
 
     const onAuthStateChange = async () => {
@@ -48,18 +81,8 @@ export default function SignUpConfirmScreen() {
             }
             catch {
                 console.log(error)
-            } finally {
-               const {data: Profile } = await supabase
-               .from('Profile')
-               .insert([
-                   {
-                       alias: alias,
-                       email: email,
-                       image: imageURL
-                   }
-               ])
- 
-            }
+            } 
+            
             console.log("AuthStateChange Successful")
 
     
@@ -69,33 +92,20 @@ export default function SignUpConfirmScreen() {
         
     }
 
-
-    // const updateData = async () => {
-
-    //     onChangeMetadata({
-    //         createdAt: data.session.user.email_change_sent_at,
-    //         alias: data.session.user.user_metadata.alias,
-    //         email: data.session.user.user_metadata.email,
-    //         image: data.session.user.user_metadata.image
-    //     })
-    //     console.log(metadata);
-    // }
-
     return (
         <View>
                 <View className='bg-rose-700 h-full w-full'>
                     <StatusBar style="light"/>
                     <Image className='h-full w-full absolute' source={require('../assets/images/background.png')}/>
-                    <View className="h-full w-full flex justify-around pt-40 pb-10">
+                    <View className="h-full  justify-around items-center pt-40 pb-10">
                         {/* Heading */}
                         <View className="flex items-center">
-                            <Text className="text-orange-100 font-bold tracking-wider text-3xl">
+                            <Text className="text-orange-100 text-center font-bold tracking-wider text-3xl">
                             Press confirm to begin swiping!
                             </Text>
                         </View>
 
-                        {/* <View className="flex-1 -mt-6"> */}
-                        <View className="bg-white h-3/4 rounded-xl relative"> 
+                        <View className="bg-white items-center h-3/4 w-96 rounded-xl "> 
                             <Image 
                                 className="absolute top-0 h-full w-full rounded-xl"
                                 source = {{uri: imageURL }}
@@ -108,8 +118,12 @@ export default function SignUpConfirmScreen() {
 
                             </View>
                         </View>
-                        <View>
-                            <Button onPress={() => updateData}></Button>
+                        <View className="w-32">
+                            <Button 
+                                title="Confirm"
+                                onPress={() => buttonFunction()}
+                            >
+                            </Button>
                         </View>
                     </View>
                 {/* </View> */}
