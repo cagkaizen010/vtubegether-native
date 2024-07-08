@@ -11,10 +11,10 @@ export default function SignUpConfirmScreen() {
 
     }, [])
 
-    const [alias, onChangeAlias] = useState(null)
-    const [email, onChangeEmail] = useState(null)
+    const [alias, onChangeAlias] = useState(null);
+    const [email, onChangeEmail] = useState(null);
     const [imageURL, onChangeImageURL] = useState(null);
-
+    const FormData = global.FormData;
     
 
     const getImage = async () => {
@@ -36,7 +36,7 @@ export default function SignUpConfirmScreen() {
                {
                    alias: alias,
                    email: email,
-                   image: imageURL
+                //    image: imageURL
                }
            ])
            if (error){
@@ -50,15 +50,19 @@ export default function SignUpConfirmScreen() {
 
     const uploadImage = async () => {
         console.log("Uploading image")
+        const formData = new FormData();
+
+        formData.append("image", {
+            uri: imageURL,
+            type: "image/png",
+            name: alias,
+        })
+
         const {data, error} = await supabase.storage
         .from('images')
-        // .upload(`avatar_${alias}`, imageURL, {
-        //     contentType: 'image/gif',
-        // })
-        .upload(imageURL, decode('base64FileData'), {
-            contentType: 'image/jpeg'
+        .upload(`avatar_${alias}`, formData, {
+            contentType: 'image/png'
         })
-        // showOverlay.value = false
         if (error) {
             console.log(error)
             throw error
