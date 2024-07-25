@@ -203,7 +203,7 @@ export default function LoginScreen() {
                             className="w-full bg-sky-400 p-3 rounded-2xl mb-3">
                                 <Text className="text-xl font-bold text-white text-center">Login</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity
+                        {/* <TouchableOpacity
                             // onPress={()=>navigation.push('Swipe')}
                             onPress = {handleClickGithub}
                             className="w-full bg-sky-700 p-3 rounded-2xl mb-3">
@@ -214,7 +214,7 @@ export default function LoginScreen() {
                             onPress = {handleClickGoogle}
                             className="w-full bg-sky-700 p-3 rounded-2xl mb-3">
                                 <Text className="text-x2 font-bold text-white text-center">Login with Google</Text>
-                        </TouchableOpacity>
+                        </TouchableOpacity> */}
                     </Animated.View>
                     <Animated.View entering={FadeInDown.duration(600).springify()} className='flex-row justify-center'>
                         <Text className='text-white'>Don't have an account?</Text>

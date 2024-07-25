@@ -1,34 +1,67 @@
 {
+
   "expo": {
+
     "scheme": "exp://192.168.0.6:8081",
-    "name": "vtubegether-native",
+"name": "vtubegether-native",
+
     "slug": "vtubegether-native",
+
+    "description": "A place for online influencers to network.",
+
     "version": "1.0.0",
+
     "orientation": "portrait",
+
     "icon": "./assets/icon.png",
+
     "userInterfaceStyle": "light",
+
     "splash": {
+
       "image": "./assets/splash.png",
+
       "resizeMode": "contain",
+
       "backgroundColor": "#ffffff"
+
     },
+
     "assetBundlePatterns": [
+
       "**/*"
+
     ],
+
     "ios": {
+
       "supportsTablet": true
+
     },
+
     "android": {
+
       "adaptiveIcon": {
+
         "foregroundImage": "./assets/adaptive-icon.png",
+
         "backgroundColor": "#ffffff"
+
       }
+
     },
+
     "web": {
+
       "favicon": "./assets/favicon.png"
+
     },
+
     "plugins": [
+
       "expo-secure-store"
+
     ]
   }
 }
+

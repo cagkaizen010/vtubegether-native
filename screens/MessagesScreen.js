@@ -1,21 +1,21 @@
 import React from 'react';
 import {SafeAreaView, Image, Text, View, StyleSheet, Button, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
-import {Swipe} from './SwipeScreen'
 import { useNavigation } from '@react-navigation/native';
 import Chat from '../components/message/Chat';
 import { Icon } from 'react-native-elements';
 import tw from 'twrnc'
 import Actions from '../components/message/Actions';
 
-// AI Girlfriend, simple API calls
+
 
 export default function MessagesScreen() {
-    const navigation = useNavigation();
 
-    const handleHomeButtonClick = () => {
-        console.log("handleHomeButtonClick Triggered")
-        navigation.push('Inbox')
-    }
+const navigation = useNavigation();
+const handleHomeButtonClick = () => {
+    console.log("handleHomeButtonClick Triggered")
+    navigation.push('Inbox')
+}
+
     return (
         <SafeAreaView className="flex-1 mt-6">
             <View className="flex-row items-center justify-between px-5">

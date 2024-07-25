@@ -14,20 +14,9 @@ export default function SignUpConfirmScreen() {
     const [alias, onChangeAlias] = useState(null);
     const [email, onChangeEmail] = useState(null);
     const [imageURL, onChangeImageURL] = useState(null);
+    const navigation = useNavigation();
     const FormData = global.FormData;
-    
-
-    const getImage = async () => {
-        const {data, error} = await supabase.auth.getSession()
-        imageURL = JSON.stringify(data.session.user.user_metadata.image)
-        console.log(imageURL)
-    }
-
-    const outputUpdatedValues = async() => {
-        // console.log("AFTER UPDATE! metadata.alias: " + alias);
-        // console.log("AFTER UPDATE! metadata.email: " + email);
-        // console.log("AFTER UPDATE! metadata.image: " + imageURL);
-    }
+ 
 
     const buttonFunction = async () => {
         const {data: Profile, error } = await supabase
@@ -40,11 +29,14 @@ export default function SignUpConfirmScreen() {
                }
            ])
            if (error){
+            console.log("ERROR IN buttonFunction")
             console.log(error)
-            throw error
+            // throw error
            }
-           else console.log("Data Upload Successful")
-
+           else {
+            console.log("Data Upload Successful")
+           }
+            navigation.push('Swipe')
            uploadImage();
     }
 

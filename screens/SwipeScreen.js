@@ -1,12 +1,9 @@
 import React, {useRef} from 'react';
 import {SafeAreaView, Image, Text, View, StyleSheet, Button, TouchableOpacity } from 'react-native';
-import { StatusBar, } from 'react-native-web';
-import LoginScreen from './SignupScreen';
 import { useNavigation } from '@react-navigation/native';
 import Swiper from "react-native-deck-swiper"
 import {Entypo, Ionicons} from "@expo/vector-icons"
 import { supabase } from '../lib/helper/supabaseClient'
-import { authSuccess } from './LoginScreen';
 
 const person = [
   {
@@ -24,22 +21,22 @@ const person = [
   {
     name: "Yuandere",
     age:28,
-    desc: "Go fuck yourself",
+    desc: "I am so excited for this to be a thing",
     pic: ["https://cdna.artstation.com/p/assets/images/images/043/718/548/smaller_square/yuandere-werewolf-jpg.jpg?1638094099"],
     id: 2,
   },
   {
     name: "Harry",
     age: 24,
-    desc: "God why",
-    pic: ["https://media.discordapp.net/attachments/946532387947429909/1178768514601984092/image.png"],
+    desc: "Why have we created this?",
+    pic: ["https://ih1.redbubble.net/image.594684711.4150/bg,f8f8f8-flat,750x,075,f-pad,750x1000,f8f8f8.jpg"],
     id: 3,
   },
   {
     name: "Joe Gao",
     age: 24,
-    desc: "Fuck you Kaizen",
-    pic :["https://cdn.discordapp.com/attachments/946532387947429909/1178786232424206477/Layer_3.png"],
+    desc: "Why Kaizen why",
+    pic :["https://media.licdn.com/dms/image/C4D03AQFpKHMMXj4jeQ/profile-displayphoto-shrink_200_200/0/1635399691690?e=2147483647&v=beta&t=9QxH21sJbOAkikEH70WFPOFpr68qKWxIgEOlsbrPqaE"],
     id: 4,
   }
 ];

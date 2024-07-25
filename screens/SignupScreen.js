@@ -57,7 +57,7 @@ export default function SignupScreen() {
                         <TouchableOpacity 
                             onPress={handleClickNext}
                             className='w-full bg-sky-400 p-3 rounded-2x1 mb-3'>
-                            <Text className="text-x1 font-bold text-white text-center">Next</Text>
+                            <Text className="text-x1 font-bold text-white text-center">Send Confirmation Email</Text>
                         </TouchableOpacity>
                     </View>
                     <View className='flex-row justify-center'>
@@ -66,6 +66,10 @@ export default function SignupScreen() {
                             onPress={()=>navigation.push('Login')}>
                             <Text className='text-sky-600 font-bold'> Login</Text>
                         </TouchableOpacity>
+                    </View>
+                    <View className="flex-row justify-center">
+
+                        <Text className='text-white'>AFTER PRESSING "SEND CONFIRMATION EMAIL", IMMEDIATELY CHECK YOUR EMAIL</Text>
                     </View>
                 </View>
             </View>

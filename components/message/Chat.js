@@ -3,6 +3,7 @@ import React from 'react';
 import tw from 'twrnc';
 import chatMessage from './data/chatData';
 
+
 const Chat = () => {
     return (
         <ScrollView

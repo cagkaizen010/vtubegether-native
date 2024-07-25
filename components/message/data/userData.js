@@ -1,18 +1,18 @@
 export default [
     {
         name: "Yana",
-        lastText: "What the fuck do you mean you'd eat my ass",
-        icon: 'https://cdn.discordapp.com/attachments/613530675131187210/1224431235334668389/yana_icon.jpg?ex=661d7773&is=660b0273&hm=cbbbc3f33b5d0460e9f3cbf3d1428a2d7569e8b68a0e303e886827b1ec259a33&'
+        lastText: "Placeholder I swear ill finish it",
+        icon: 'https://static-cdn.jtvnw.net/jtv_user_pictures/7447956f-4381-4bdf-939c-64e829bbc8f0-profile_image-300x300.png'
     },
 
     {
         name: "Yuan",
-        lastText: "Stupid motherfucker wants some smoke",
-        icon: 'https://cdn.discordapp.com/attachments/613530675131187210/1224431235602976830/yuan_icon.jpeg?ex=661d7773&is=660b0273&hm=eda10d5ecb00b8d80901fbadc5609efe44c75eda1bb0882083478eebc1eb3224&'
+        lastText: "PLEASE HIRE ME PLEASE HIRE ME",
+        icon: 'https://static-cdn.jtvnw.net/jtv_user_pictures/529bc177-642f-4315-96e8-390080ff664d-profile_image-300x300.jpeg'
     },
     {
         name: "Seth Griggs",
-        lastText: "Kaizen stop edging or some shit",
-        icon: 'https://cdn.discordapp.com/attachments/613530675131187210/1224431235833532496/seth_icon.jpg?ex=661d7773&is=660b0273&hm=090fe1f0c2f111548ee766dca8dacf770240f62f394a9b7d28899efa0c5488a5&'
+        lastText: "PLEASE PLEASE PLEASE PLEASE",
+        icon: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRya8WPb3d1HWIes5nnLFpD135KyXxSQP8pMBxSS47wgxoNNjw7d-BvdulyIvCzvk22Jio&usqp=CAU'
     }
 ]
