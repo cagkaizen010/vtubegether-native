@@ -47,7 +47,7 @@ class Actions extends Component {
 
     sendMessage = async () => {
         try {
-            console.log("message? : " + this.state.message)
+            // console.log("message? : " + this.state.message)
             this.state.loading = true
             const {data, error} = await supabase
                 .from('global_message')
@@ -66,7 +66,7 @@ class Actions extends Component {
         catch (e) {
             console.log("ERROR! " + e)
         } finally {
-            console.log("Message Sent")
+            // console.log("Message Sent")
             state.loading = false
         }
     }
