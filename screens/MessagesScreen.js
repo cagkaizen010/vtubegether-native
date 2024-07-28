@@ -5,16 +5,28 @@ import Chat from '../components/message/Chat';
 import { Icon } from 'react-native-elements';
 import tw from 'twrnc'
 import Actions from '../components/message/Actions';
-
+import { supabase } from '../lib/helper/supabaseClient';
 
 
 export default function MessagesScreen() {
 
-const navigation = useNavigation();
-const handleHomeButtonClick = () => {
-    console.log("handleHomeButtonClick Triggered")
-    navigation.push('Inbox')
-}
+    const navigation = useNavigation();
+
+    const channels = supabase.channel('randomChannel')
+        .on(
+            'postgres_changes',
+            {event: 'INSERT'},
+            (payload) => console.log(payload)
+        )
+        .subscribe((status) => {
+            console.log("status: " + status) 
+        })
+
+    const handleHomeButtonClick = () => {
+        console.log("handleHomeButtonClick Triggered")
+        channels.unsubscribe('randomChannel')
+        navigation.push('Inbox')
+    }
 
     return (
         <SafeAreaView className="flex-1 mt-6">

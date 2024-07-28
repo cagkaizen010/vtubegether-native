@@ -17,7 +17,7 @@ export default function SignUpImageAddScreen({route}) {
     
     const navigation = useNavigation();
     // const [modalVisible, setModalVisible] = useState(false)
-    const [image, setImage] = useState();
+    const [image, setImage] = useState()
 
     const onGalleryButtonPress = async () => {
       try  {

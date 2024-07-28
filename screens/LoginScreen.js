@@ -152,8 +152,8 @@ export default function LoginScreen() {
                     navigation.push('SignUpAliasAdd')
                 else navigation.push('SignUpImageAdd')
             }
-            else navigation.push('SignUpConfirm')
-            // else navigation.push('Swipe')
+            // else navigation.push('SignUpConfirm')
+            else navigation.push('Swipe')
 
             // handle sign in event
         } else if (event === 'SIGNED_OUT') {

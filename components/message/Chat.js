@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View, ScrollView, Image } from 'react-native';
-import React, {useEffect} from 'react';
+import React, {useLayoutEffect, useEffect, useState} from 'react';
 import tw from 'twrnc';
 import chatMessage from './data/chatData';
 import { supabase } from '../../lib/helper/supabaseClient';
@@ -7,48 +7,53 @@ import { supabase } from '../../lib/helper/supabaseClient';
 
 
 const Chat = () => {
-    useEffect(() => {
-        console.log("Subscribing to updates")
+    const [chatData, onChangeChatData] = useState()
 
-        let chatData = null;
-        const channels = supabase.channel('randomChannel')
-        .on(
-            'broadcast',
-            {event: 'INSERT'},
-        )
-        .subscribe((status) => {
-            console.log("status: " + status)
+    useLayoutEffect(() => {
+        getChats()
+            .then((result) => uploadChats(result) )
+            // .then(() => displayChats())
+            .catch((error) => {console.log(error)})
 
-            getChats()
-            .then((result) => {
-                chatData = JSON.stringify(result)
-            })
-            .then(console.log("chatData: " +chatData))
-        })
+        
+        
 
-    })
+    }, [ getChats, uploadChats, displayChats, ])
+
 
 
     const getChats = async () => {
-            console.log("Getting Chats")
-            let {data , error} = await supabase
-                .from('global_message')
-                .select('*')
-            if (error) {console.log("error: " + error)}
-            
-            
-            return data
-        }
+        let dataArray = []
 
-    // const dataRecognizeCheck = () => {
-    //     console.log("chatData: " + JSON.stringify())
-    // }
+        // console.log("Getting Chats")
+        let {data , error} = await supabase
+            .from('global_message')
+            .select('*')
+        if (error) {console.log("error: " + JSON.stringify(error))}
 
-    function getMessages(payload) {
-
-        console.log("props.payload: " + payload)
-
+        data.map((chat, i) => {
+            dataArray.push( 
+            {
+                id: i,
+                time: chat.created_at,
+                text: chat.description,
+                owner: chat.isSender,
+                image: null,
+            })
+        })
+        // console.log(JSON.stringify(dataArray))
+        return dataArray
     }
+
+    const uploadChats = async (result) => {
+        onChangeChatData(result)
+    }
+
+    const displayChats = async () => {
+        console.log("chatData: " + JSON.stringify(chatData))
+    }
+    
+
     return (
         <ScrollView
         style = {[{
@@ -58,7 +63,7 @@ const Chat = () => {
         scrollEnabled={true}>
 
         <View>
-            {chatMessage.map((chat, i) => (
+            { chatData ? chatData.map((chat, i) => (
                 <View
                     key = {i}
                     style= {[{
@@ -84,7 +89,8 @@ const Chat = () => {
                         />
                     </View>
                 </View>
-            ))}
+                )
+             ) : <></>}
         </View>
         </ScrollView>
     )
