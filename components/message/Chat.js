@@ -9,17 +9,31 @@ import { supabase } from '../../lib/helper/supabaseClient';
 const Chat = () => {
     const [chatData, onChangeChatData] = useState()
 
-    useLayoutEffect(() => {
+
+    useEffect(() => {
         getChats()
             .then((result) => uploadChats(result) )
             // .then(() => displayChats())
             .catch((error) => {console.log(error)})
-
-        
-        
-
     }, [ getChats, uploadChats, displayChats, ])
+    
+   
 
+    const handleInserts = (payload) => {
+        // console.log('Change received!', payload)
+        getChats()
+            .then((result) => uploadChats(result) )
+            // .then(() => displayChats())
+            .catch((error) => {console.log(error)})
+    }
+
+
+
+    supabase
+        .channel('randomchannel')
+        .on('postgres_changes', {event:'INSERT', schema: 'public', table: 'global_message'}, 
+            handleInserts
+        ).subscribe()
 
 
     const getChats = async () => {
@@ -31,15 +45,23 @@ const Chat = () => {
             .select('*')
         if (error) {console.log("error: " + JSON.stringify(error))}
 
+            
+        const {data: {user}} = await supabase.auth.getUser()
+
         data.map((chat, i) => {
             dataArray.push( 
             {
                 id: i,
                 time: chat.created_at,
                 text: chat.description,
-                owner: chat.isSender,
+                // owner: chat.isSender,
+                owner: user.user_metadata.alias == chat.name, 
                 image: null,
             })
+            console.log("user.user_metadata.alias: " + user.user_metadata.alias)
+
+            console.log("data.name: " + JSON.stringify(chat))
+
         })
         // console.log(JSON.stringify(dataArray))
         return dataArray
@@ -52,7 +74,6 @@ const Chat = () => {
     const displayChats = async () => {
         console.log("chatData: " + JSON.stringify(chatData))
     }
-    
 
     return (
         <ScrollView
@@ -109,7 +130,7 @@ const styles = StyleSheet.create({
     },
     ownerView: tw`flex flex-row flex-wrap p-2 w-1/2 rounded-xl ml-44 my-1`,
     nonOwnerText: {
-        color:"#000",
+        color:"#001",
         fontSize: 15,
     },
     nonOwnerTextTime: {

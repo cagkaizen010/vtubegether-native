@@ -3,6 +3,7 @@ import {TouchableOpacity, StyleSheet, TextInput, View, Keyboard, Text, Animated}
 import tw from 'twrnc'
 import {Icon} from 'react-native-elements'
 import { supabase } from '../../lib/helper/supabaseClient'
+import {Chat} from "./Chat"
 
 class Actions extends Component {
     constructor(props) {
@@ -45,22 +46,35 @@ class Actions extends Component {
     
     render() {
 
+
+    getUUID = async () => {
+        const {data: {user}} = await supabase.auth.getUser()
+        console.log("data:" + data)
+    }
+
+    // Insert message into database
     sendMessage = async () => {
         try {
             // console.log("message? : " + this.state.message)
             this.state.loading = true
+            
+    
+            const {data: {user}} = await supabase.auth.getUser()
+            console.log("data:" + JSON.stringify(user))           
+
             const {data, error} = await supabase
                 .from('global_message')
                 .insert([
                     {
-                        name: "derek",
+                        name: user.user_metadata.alias,
                         description: this.state.message,
+                        isSender: false,
                     }
                 ])
             if (error) {
                 console.log(error)
             }
-           
+
 
         }
         catch (e) {
