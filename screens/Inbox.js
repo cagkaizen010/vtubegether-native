@@ -1,23 +1,91 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { StyleSheet, TouchableOpacity, View, SafeAreaView, Image, ScrollView, Text} from 'react-native'
 import { useNavigation } from '@react-navigation/native';
+import { useEffect } from 'react';
 import tw from 'twrnc'
 import {Icon} from 'react-native-elements'
-import userData from '../components/message/data/userData'
+import { supabase } from '../lib/helper/supabaseClient';
+// import userData from '../components/message/data/userData'
 
 export default function InboxScreen(){
+
+    // const [isLoading, setIsLoading] = useState(false);
     const navigation = useNavigation()
+    const [inboxData, onChangeInboxData] = useState();
+
+    useEffect(() => {
+        const getAllInformation = async () => {
+            // setIsLoading(true)
+            getCurrentSession()
+            .then((result) => getInbox(result))
+            .then((data) => uploadInboxData(data))
+            .catch((error) => {console.log(error)})
+            // setIsLoading(false)
+        }
+        getAllInformation()
+        
+    }, [])
+
+
+    const getCurrentSession= async () => {
+        console.log("Getting Inbox")
+        let tempID = "ee994e0e-9d51-4f93-9922-ffec5f0f8710"
+        const {data: user, error} = await supabase.auth.getSession();
+        if (error) {
+            console.log(error)
+            throw error
+        }
+        // console.log(JSON.stringify(user.session.user.id, null, 1))
+
+        return user;
+        
+    }
+    const getInbox = async (result) => {
+        let matches = [] 
+
+        let { data: messages, err} = await supabase
+        .from('inboxes')
+        .select('*')
+        .eq('recipient', result.session.user.id)
+        if (err) {
+            console.log(err)
+            throw err
+        }
+
+        messages.map((message, i) => {
+            matches.push(
+            {
+                name: message.recipient,
+                sender: message.sender,
+                lastText: message.content,
+                icon: "https://static-cdn.jtvnw.net/jtv_user_pictures/529bc177-642f-4315-96e8-390080ff664d-profile_image-300x300.jpeg",
+            })
+        })
+
+        console.log("inboxes: " + JSON.stringify(matches[0]))
+        return matches
+    }
+
+    const uploadInboxData = async (data) => {
+        onChangeInboxData(data)
+    }
 
     const handleHomeButtonClick = () => {
         console.log("handleHomeButtonClick Triggered")
         navigation.push('Swipe')
     }
 
-    const handleMessagesClick = () => {
+    const handleMessagesClick = (userData) => {
         console.log("handleMessagesClick Triggered")
-        navigation.push('Messages')
+        // navigation.push('Messages')
+        console.log(userData.name + userData.sender)
+        navigation.navigate("Messages", {
+            chatroom: userData.name+ userData.sender,
+        })
     }
+
     return (
+        
         <SafeAreaView>
           <View className="flex-row items-center justify-between px-5">
                 <TouchableOpacity onPress={handleHomeButtonClick}>
@@ -46,12 +114,14 @@ export default function InboxScreen(){
 
             <ScrollView style={[{
                 }]}>
-                {userData.map((userData, i) => (
+                {inboxData ? inboxData.map((userData, i) => (
                     <TouchableOpacity
                         key={i}
-                        onPress={handleMessagesClick}
+                        onPress={() => handleMessagesClick(userData)}
+                         
+
                         style={[tw`flex-row `, 
-                            // styles.icon
+                            styles.icon
                         ]}
                     >   
                         <Image 
@@ -75,12 +145,17 @@ export default function InboxScreen(){
                         >{userData.lastText}</Text>
                         </View>
                     </TouchableOpacity>
-                ))}
+                )): 
+                <SafeAreaView>
+                    <Text>No messages found.</Text>
+                </SafeAreaView>}
                                      
             </ScrollView>
         </SafeAreaView>
-  
-    )
+        )
+    
+    // </div>
+    // )
 }
 
     const styles = StyleSheet.create({

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect }from 'react';
 import {SafeAreaView, Image, Text, View, StyleSheet, Button, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Chat from '../components/message/Chat';
@@ -8,9 +8,12 @@ import Actions from '../components/message/Actions';
 import { supabase } from '../lib/helper/supabaseClient';
 
 
-export default function MessagesScreen() {
-
+export default function MessagesScreen({route}) {
+    const {chatroom} = route.params
     const navigation = useNavigation();
+    useEffect(() => {
+        console.log(chatroom)
+    })
 
     const channels = supabase.channel('randomChannel')
         .on(
@@ -53,8 +56,12 @@ export default function MessagesScreen() {
                 </TouchableOpacity>
                 
             </View>
-                <Chat />
-                <Actions />
+                <Chat 
+                    chatroomID={chatroom}  
+                />
+                <Actions 
+                    chatroomID={chatroom}
+                />
         </SafeAreaView>
     )
 }

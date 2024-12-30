@@ -9,6 +9,7 @@ class Actions extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            chatroomID: props.chatroomID,
             loading: false,
             message: "",
             error: undefined
@@ -49,26 +50,28 @@ class Actions extends Component {
 
     getUUID = async () => {
         const {data: {user}} = await supabase.auth.getUser()
-        console.log("data:" + data)
+        console.log("data:" + user)
     }
 
     // Insert message into database
-    sendMessage = async () => {
+    sendMessage = async (chatroomID) => {
         try {
             // console.log("message? : " + this.state.message)
             this.state.loading = true
             
     
             const {data: {user}} = await supabase.auth.getUser()
-            console.log("data:" + JSON.stringify(user))           
-
+            // console.log("data:" + JSON.stringify(user))           
+            console.log(chatroomID) 
+            
             const {data, error} = await supabase
                 .from('global_message')
                 .insert([
                     {
+                        chatroomID: this.state.chatroomID,
                         name: user.user_metadata.alias,
                         description: this.state.message,
-                        isSender: false,
+                        isSender: true,
                     }
                 ])
             if (error) {
@@ -104,7 +107,7 @@ class Actions extends Component {
                 />
                 
                 <TouchableOpacity
-                    onPress={sendMessage}
+                    onPress={() => sendMessage(props.chatroomID)}
                 >
 
                     <Icon 

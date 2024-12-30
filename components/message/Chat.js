@@ -4,11 +4,9 @@ import tw from 'twrnc';
 import chatMessage from './data/chatData';
 import { supabase } from '../../lib/helper/supabaseClient';
 
-
-
-const Chat = () => {
+const Chat = (props) => {
     const [chatData, onChangeChatData] = useState()
-
+    var DMinstance = props.chatroomID;
 
     useEffect(() => {
         getChats()
@@ -17,8 +15,14 @@ const Chat = () => {
             .catch((error) => {console.log(error)})
     }, [ getChats, uploadChats, displayChats, ])
     
-   
+    supabase
+        .channel(DMinstance)
+        .on('postgres_changes', {event:'INSERT', schema: 'public', table: "inboxes"}, 
+            handleInserts
+        ).subscribe()
 
+
+    // Upload chats
     const handleInserts = (payload) => {
         // console.log('Change received!', payload)
         getChats()
@@ -27,52 +31,43 @@ const Chat = () => {
             .catch((error) => {console.log(error)})
     }
 
-
-
-    supabase
-        .channel('randomchannel')
-        .on('postgres_changes', {event:'INSERT', schema: 'public', table: 'global_message'}, 
-            handleInserts
-        ).subscribe()
-
+    const uploadChats = async (result) => {
+        onChangeChatData(result)
+    }
 
     const getChats = async () => {
         let dataArray = []
 
         // console.log("Getting Chats")
         let {data , error} = await supabase
-            .from('global_message')
+            .from("inboxes")
             .select('*')
         if (error) {console.log("error: " + JSON.stringify(error))}
 
             
         const {data: {user}} = await supabase.auth.getUser()
 
-        data.map((chat, i) => {
+        data.map(
+            (chat, i) => {
+
             dataArray.push( 
             {
                 id: i,
                 time: chat.created_at,
-                text: chat.description,
+                text: chat.content,
                 // owner: chat.isSender,
-                owner: user.user_metadata.alias == chat.name, 
+                owner: user.id == chat.recipient, 
                 image: null,
             })
-            console.log("user.user_metadata.alias: " + user.user_metadata.alias)
-
-            console.log("data.name: " + JSON.stringify(chat))
 
         })
         // console.log(JSON.stringify(dataArray))
         return dataArray
     }
 
-    const uploadChats = async (result) => {
-        onChangeChatData(result)
-    }
 
     const displayChats = async () => {
-        console.log("chatData: " + JSON.stringify(chatData))
+        // console.log("chatData: " + JSON.stringify(chatData))
     }
 
     return (

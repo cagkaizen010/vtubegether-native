@@ -41,13 +41,8 @@ const signInWithEmail = async () => {
         throw error
     }
 
-    // console.log("data: " + JSON.stringify(data, null, 1));
     getSession();
 
-    // console.log('xxxxxxxxxxxxxxxx')
-    // getSession();
-
-    // if (data.user.aud == 'authenticated') authSuccess = true
     
 }
 
@@ -57,7 +52,7 @@ const getSession = async () => {
         console.log(error)
         throw error
     }
-    // console.log("DATA AFTER GETSESSION(): " + JSON.stringify(data.session.user.user_metadata, null, 1))
+    console.log("DATA AFTER GETSESSION(): " + JSON.stringify(data.session.user, null, 1))
 }
 const performOAuthGoogle = async () => {
     const {data, error} = await supabase.auth.signInWithOAuth({
@@ -203,18 +198,7 @@ export default function LoginScreen() {
                             className="w-full bg-sky-400 p-3 rounded-2xl mb-3">
                                 <Text className="text-xl font-bold text-white text-center">Login</Text>
                         </TouchableOpacity>
-                        {/* <TouchableOpacity
-                            // onPress={()=>navigation.push('Swipe')}
-                            onPress = {handleClickGithub}
-                            className="w-full bg-sky-700 p-3 rounded-2xl mb-3">
-                                <Text className="text-x2 font-bold text-white text-center">Login with GitHub</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            // onPress ={   performOAuth().then(() => navigation.push('Swipe'))  } 
-                            onPress = {handleClickGoogle}
-                            className="w-full bg-sky-700 p-3 rounded-2xl mb-3">
-                                <Text className="text-x2 font-bold text-white text-center">Login with Google</Text>
-                        </TouchableOpacity> */}
+
                     </Animated.View>
                     <Animated.View entering={FadeInDown.duration(600).springify()} className='flex-row justify-center'>
                         <Text className='text-white'>Don't have an account?</Text>

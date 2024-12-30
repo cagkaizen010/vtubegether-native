@@ -32,7 +32,7 @@ function App({navigation}) {
               </> 
               }
               
-              <Stack.Screen name="Swipe" component={SwipeScreen} options={{gestureDirection: 'horizontal-inverted'}}/>
+              <Stack.Screen name="Swipe" component={SwipeScreen} />
         </Stack.Navigator>
       </NavigationContainer>
   );
