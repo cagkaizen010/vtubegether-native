@@ -4,30 +4,31 @@ import tw from 'twrnc';
 import chatMessage from './data/chatData';
 import { supabase } from '../../lib/helper/supabaseClient';
 
+
+
 const Chat = (props) => {
     const [chatData, onChangeChatData] = useState()
     var DMinstance = props.chatroomID;
+
+    supabase
+        .channel(DMinstance)
+        .on('postgres_changes', {event:'INSERT', schema: 'chatrooms', table: DMinstance}, 
+            handleInserts
+        ).subscribe()
+
 
     useEffect(() => {
         getChats()
             .then((result) => uploadChats(result) )
             // .then(() => displayChats())
             .catch((error) => {console.log(error)})
-    }, [ getChats, uploadChats, displayChats, ])
+    }, [ getChats, uploadChats, displayChats ])
     
-    supabase
-        .channel(DMinstance)
-        .on('postgres_changes', {event:'INSERT', schema: 'public', table: "inboxes"}, 
-            handleInserts
-        ).subscribe()
-
-
+    
     // Upload chats
     const handleInserts = (payload) => {
-        // console.log('Change received!', payload)
         getChats()
             .then((result) => uploadChats(result) )
-            // .then(() => displayChats())
             .catch((error) => {console.log(error)})
     }
 
@@ -38,9 +39,9 @@ const Chat = (props) => {
     const getChats = async () => {
         let dataArray = []
 
-        // console.log("Getting Chats")
         let {data , error} = await supabase
-            .from("inboxes")
+            .schema("chatrooms")
+            .from(DMinstance)
             .select('*')
         if (error) {console.log("error: " + JSON.stringify(error))}
 
@@ -54,9 +55,9 @@ const Chat = (props) => {
             {
                 id: i,
                 time: chat.created_at,
-                text: chat.content,
+                text: chat.message.message,
                 // owner: chat.isSender,
-                owner: user.id == chat.recipient, 
+                owner: user.id == chat.message.uuid, 
                 image: null,
             })
 

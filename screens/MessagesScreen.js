@@ -12,22 +12,23 @@ export default function MessagesScreen({route}) {
     const {chatroom} = route.params
     const navigation = useNavigation();
     useEffect(() => {
-        console.log(chatroom)
+        // console.log(chatroom)
     })
 
-    const channels = supabase.channel('randomChannel')
+    const channels = supabase.channel(chatroom)
         .on(
             'postgres_changes',
             {event: 'INSERT'},
             (payload) => console.log(payload)
         )
         .subscribe((status) => {
+            console.log("chatroom: " + chatroom)
             console.log("status: " + status) 
         })
 
     const handleHomeButtonClick = () => {
         console.log("handleHomeButtonClick Triggered")
-        channels.unsubscribe('randomChannel')
+        channels.unsubscribe(chatroom)
         navigation.push('Inbox')
     }
 

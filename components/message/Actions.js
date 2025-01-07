@@ -62,18 +62,26 @@ class Actions extends Component {
     
             const {data: {user}} = await supabase.auth.getUser()
             // console.log("data:" + JSON.stringify(user))           
-            console.log(chatroomID) 
+            console.log("chatroomID inside Actions.js " + chatroomID) 
             
             const {data, error} = await supabase
-                .from('global_message')
+                .schema("chatrooms")
+                .from(chatroomID)
                 .insert([
                     {
-                        chatroomID: this.state.chatroomID,
-                        name: user.user_metadata.alias,
-                        description: this.state.message,
-                        isSender: true,
+                        // chatroomID: this.state.chatroomID,
+                        // name: user.user_metadata.alias,
+                        // description: this.state.message,
+                        // isSender: true,
+                        message: {
+                           user: user.user_metadata.alias,
+                            uuid: user.user_metadata.id,
+                            message: this.state.message
+                        }
                     }
-                ])
+                ]
+                    
+                )
             if (error) {
                 console.log(error)
             }
@@ -107,7 +115,7 @@ class Actions extends Component {
                 />
                 
                 <TouchableOpacity
-                    onPress={() => sendMessage(props.chatroomID)}
+                    onPress={() => sendMessage(this.props.chatroomID)}
                 >
 
                     <Icon 

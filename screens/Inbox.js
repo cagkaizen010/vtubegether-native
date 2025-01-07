@@ -41,29 +41,89 @@ export default function InboxScreen(){
         
     }
     const getInbox = async (result) => {
-        let matches = [] 
+        let chatChannels = [] 
+        let usersID = null;
+        let inbox_uuid = []
 
-        let { data: messages, err} = await supabase
-        .from('inboxes')
-        .select('*')
-        .eq('recipient', result.session.user.id)
+        let { data: currentUser, er} = await supabase
+        .from('users')
+        .select('id')
+        .eq("user_uid", result.session.user.id)
         if (err) {
-            console.log(err)
+            console.log("INSIDE currentUser retrieval: " + er)
+            throw er
+        }
+
+        usersID = currentUser[0].id
+
+        let { data: inbox_uuid_array, err} = await supabase
+        .from('inbox_participants')
+        .select(`
+            inbox_uid
+            `)
+        .eq("user_id", usersID)
+        if (err) {
+            console.log("INSIDE currentUser_inbox_uid retrieval: " + err)
             throw err
         }
 
-        messages.map((message, i) => {
-            matches.push(
+        inbox_uuid_array.map((inboxes, i) => {
+            inbox_uuid.push(inboxes.inbox_uid) 
+        })
+
+        let {data: filtered_inbox_uid, erro} = await supabase
+        .from('inbox_participants')
+        .select(`
+            inbox_uid,
+            inbox (
+                last_message
+            ),
+            users (
+                alias,
+                image 
+            )
+            `)
+        // .in("inbox_uid", inbox_uuid_array)
+        .in('inbox_uid', inbox_uuid)
+        .neq('user_id', usersID)
+        if (erro) {
+            console.log("INSIDE currentUser_inbox_uid retrieval: " + erro)
+            throw erro
+        }
+
+        
+
+        let {data: senderData, error} = await supabase
+        .from('inbox')
+        .select("")
+
+        
+
+        console.log("currentUser: " + JSON.stringify(currentUser))
+        // console.log("currentUser[0].id: " + usersID)
+        console.log("inbox_uuid_array: " + JSON.stringify(inbox_uuid_array))
+        console.log("---")
+        console.log(JSON.stringify(filtered_inbox_uid))
+        // console.log("user_uid: " + result.session.user.id)
+
+
+        filtered_inbox_uid.map((inbox_uid, i) => {
+            // let alias = ""
+            // let icon = ""
+            // if ((inbox_uid[i].inbox_uid == filtered_inbox_uid[i].inbox_uid) && (inbox_uid[i].user_id != usersID)){
+            //     alias =
+            // }
+
+            chatChannels.push(
             {
-                name: message.recipient,
-                sender: message.sender,
-                lastText: message.content,
-                icon: "https://static-cdn.jtvnw.net/jtv_user_pictures/529bc177-642f-4315-96e8-390080ff664d-profile_image-300x300.jpeg",
+                name: inbox_uid.users.alias,
+                lastText: inbox_uid.inbox.last_message,
+                icon: inbox_uid.users.image,
             })
         })
 
-        console.log("inboxes: " + JSON.stringify(matches[0]))
-        return matches
+        // console.log("inboxes: " + JSON.stringify(matches[0]))
+        return chatChannels
     }
 
     const uploadInboxData = async (data) => {
@@ -78,9 +138,9 @@ export default function InboxScreen(){
     const handleMessagesClick = (userData) => {
         console.log("handleMessagesClick Triggered")
         // navigation.push('Messages')
-        console.log(userData.name + userData.sender)
+        // console.log("chatroomID: " + userData.recipientUUID+ userData.senderUUID)
         navigation.navigate("Messages", {
-            chatroom: userData.name+ userData.sender,
+            chatroom: userData.recipientUUID+ userData.senderUUID,
         })
     }
 
