@@ -8,12 +8,12 @@ import { supabase } from '../../lib/helper/supabaseClient';
 
 const Chat = (props) => {
     const [chatData, onChangeChatData] = useState()
-    var DMinstance = props.chatroomID;
+    var DMinstance = props.inboxUID;
 
     supabase
         .channel(DMinstance)
-        .on('postgres_changes', {event:'INSERT', schema: 'chatrooms', table: DMinstance}, 
-            handleInserts
+        .on('postgres_changes', {event:'INSERT', schema: 'public', table: 'messages'}, 
+           (payload) => handleInserts(payload)
         ).subscribe()
 
 
@@ -27,6 +27,7 @@ const Chat = (props) => {
     
     // Upload chats
     const handleInserts = (payload) => {
+        // console.log('Change received!', payload)
         getChats()
             .then((result) => uploadChats(result) )
             .catch((error) => {console.log(error)})
@@ -38,31 +39,41 @@ const Chat = (props) => {
 
     const getChats = async () => {
         let dataArray = []
+        let userID = ""
 
-        let {data , error} = await supabase
-            .schema("chatrooms")
-            .from(DMinstance)
+        let {data: chat, error} = await supabase
+            .schema('public')
+            .from('messages')
             .select('*')
+            .eq('inbox_uid', DMinstance)
         if (error) {console.log("error: " + JSON.stringify(error))}
 
+        // console.log("chat: " + JSON.stringify(chat))
             
         const {data: {user}} = await supabase.auth.getUser()
+        const {data: currentUser, e}  = await supabase
+            .from('users')
+            .select('id')
+            .eq('user_uid', user.id )
+            
+        userID = currentUser[0].id
+        // console.log("user: " + userID)
 
-        data.map(
+        chat.map(
             (chat, i) => {
 
             dataArray.push( 
             {
                 id: i,
                 time: chat.created_at,
-                text: chat.message.message,
-                // owner: chat.isSender,
-                owner: user.id == chat.message.uuid, 
+                text: chat.message,
+                // owner: false,
+                owner: userID == chat.user_id, 
                 image: null,
             })
 
         })
-        // console.log(JSON.stringify(dataArray))
+        console.log(JSON.stringify(dataArray))
         return dataArray
     }
 

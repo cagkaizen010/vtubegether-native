@@ -15,7 +15,9 @@ export default function InboxScreen(){
 
     useEffect(() => {
         const getAllInformation = async () => {
-            // setIsLoading(true)
+            onChangeInboxData(null)
+
+
             getCurrentSession()
             .then((result) => getInbox(result))
             .then((data) => uploadInboxData(data))
@@ -83,7 +85,6 @@ export default function InboxScreen(){
                 image 
             )
             `)
-        // .in("inbox_uid", inbox_uuid_array)
         .in('inbox_uid', inbox_uuid)
         .neq('user_id', usersID)
         if (erro) {
@@ -91,38 +92,22 @@ export default function InboxScreen(){
             throw erro
         }
 
-        
-
-        let {data: senderData, error} = await supabase
-        .from('inbox')
-        .select("")
-
-        
-
-        console.log("currentUser: " + JSON.stringify(currentUser))
-        // console.log("currentUser[0].id: " + usersID)
-        console.log("inbox_uuid_array: " + JSON.stringify(inbox_uuid_array))
-        console.log("---")
-        console.log(JSON.stringify(filtered_inbox_uid))
-        // console.log("user_uid: " + result.session.user.id)
-
+        // console.log("currentUser: " + JSON.stringify(currentUser))
+        // console.log("inbox_uuid_array: " + JSON.stringify(inbox_uuid_array))
+        // console.log("---")
+        // console.log(JSON.stringify(filtered_inbox_uid))
 
         filtered_inbox_uid.map((inbox_uid, i) => {
-            // let alias = ""
-            // let icon = ""
-            // if ((inbox_uid[i].inbox_uid == filtered_inbox_uid[i].inbox_uid) && (inbox_uid[i].user_id != usersID)){
-            //     alias =
-            // }
-
             chatChannels.push(
             {
                 name: inbox_uid.users.alias,
                 lastText: inbox_uid.inbox.last_message,
                 icon: inbox_uid.users.image,
+                inboxUID: inbox_uid.inbox_uid
             })
+
         })
 
-        // console.log("inboxes: " + JSON.stringify(matches[0]))
         return chatChannels
     }
 
@@ -132,15 +117,14 @@ export default function InboxScreen(){
 
     const handleHomeButtonClick = () => {
         console.log("handleHomeButtonClick Triggered")
-        navigation.push('Swipe')
+        navigation.goBack()
+        // navigation.push('Swipe')
     }
 
     const handleMessagesClick = (userData) => {
         console.log("handleMessagesClick Triggered")
-        // navigation.push('Messages')
-        // console.log("chatroomID: " + userData.recipientUUID+ userData.senderUUID)
-        navigation.navigate("Messages", {
-            chatroom: userData.recipientUUID+ userData.senderUUID,
+        navigation.navigate('Messages', {
+            inboxUID: userData.inboxUID
         })
     }
 

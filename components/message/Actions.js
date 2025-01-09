@@ -9,7 +9,7 @@ class Actions extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            chatroomID: props.chatroomID,
+            inboxUID: props.inboxUID,
             loading: false,
             message: "",
             error: undefined
@@ -48,50 +48,45 @@ class Actions extends Component {
     render() {
 
 
-    getUUID = async () => {
-        const {data: {user}} = await supabase.auth.getUser()
-        console.log("data:" + user)
-    }
+ 
 
     // Insert message into database
     sendMessage = async (chatroomID) => {
         try {
             // console.log("message? : " + this.state.message)
             this.state.loading = true
+            let userID = "" 
             
     
             const {data: {user}} = await supabase.auth.getUser()
-            // console.log("data:" + JSON.stringify(user))           
-            console.log("chatroomID inside Actions.js " + chatroomID) 
+            // console.log("chatroomID inside Actions.js " + chatroomID) 
+
+            // console.log("user.id: " + user.id)
+
+            const {data: currentUser, e}  = await supabase
+            .from('users')
+            .select('id')
+            .eq('user_uid', user.id )
             
-            const {data, error} = await supabase
-                .schema("chatrooms")
-                .from(chatroomID)
-                .insert([
-                    {
-                        // chatroomID: this.state.chatroomID,
-                        // name: user.user_metadata.alias,
-                        // description: this.state.message,
-                        // isSender: true,
-                        message: {
-                           user: user.user_metadata.alias,
-                            uuid: user.user_metadata.id,
-                            message: this.state.message
-                        }
-                    }
-                ]
-                    
+            userID = currentUser[0].id
+
+            // console.log("currentUser: " + userID)
+
+            const {error} = await supabase
+                .schema('public')
+                .from('messages')
+                .insert(
+                    { user_id: userID, inbox_uid: chatroomID,  message: this.state.message },
                 )
-            if (error) {
-                console.log(error)
-            }
+            if (error) console.log("ERROR! " + JSON.stringify(error))
+            
 
 
         }
         catch (e) {
             console.log("ERROR! " + e)
         } finally {
-            // console.log("Message Sent")
+            console.log("Message Sent")
             state.loading = false
         }
     }
@@ -115,7 +110,7 @@ class Actions extends Component {
                 />
                 
                 <TouchableOpacity
-                    onPress={() => sendMessage(this.props.chatroomID)}
+                    onPress={() => sendMessage(this.props.inboxUID)}
                 >
 
                     <Icon 

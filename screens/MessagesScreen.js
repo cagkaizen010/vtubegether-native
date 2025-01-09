@@ -9,27 +9,29 @@ import { supabase } from '../lib/helper/supabaseClient';
 
 
 export default function MessagesScreen({route}) {
-    const {chatroom} = route.params
-    const navigation = useNavigation();
-    useEffect(() => {
-        // console.log(chatroom)
-    })
+    const {inboxUID} = route.params
 
-    const channels = supabase.channel(chatroom)
+    const navigation = useNavigation();
+
+    useEffect(() => {
+    })
+    
+
+    const channels = supabase.channel()
         .on(
             'postgres_changes',
             {event: 'INSERT'},
             (payload) => console.log(payload)
         )
         .subscribe((status) => {
-            console.log("chatroom: " + chatroom)
+            console.log("chatroom: " + inboxUID)
             console.log("status: " + status) 
         })
 
     const handleHomeButtonClick = () => {
         console.log("handleHomeButtonClick Triggered")
-        channels.unsubscribe(chatroom)
-        navigation.push('Inbox')
+        channels.unsubscribe(inboxUID)
+        navigation.goBack()
     }
 
     return (
@@ -58,10 +60,10 @@ export default function MessagesScreen({route}) {
                 
             </View>
                 <Chat 
-                    chatroomID={chatroom}  
+                    inboxUID = {inboxUID}
                 />
                 <Actions 
-                    chatroomID={chatroom}
+                    inboxUID = {inboxUID}
                 />
         </SafeAreaView>
     )
