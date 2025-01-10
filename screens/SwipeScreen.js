@@ -42,12 +42,7 @@ const person = [
 ];
 
 
-const performSignOut = async () => {
-  console.log("performSignOut Triggered")
-  const {error} = await supabase.auth.signOut();
-  if(error) throw error
-  console.log("Sign Out Successful")
-}
+
 
 export default function SwipeScreen() {
   const navigation=useNavigation();
@@ -55,13 +50,29 @@ export default function SwipeScreen() {
 
   const handleSignOutClick = () => {
     console.log("handleSignOutClick Triggered")
-    performSignOut().then(() =>navigation.push('Login'))
+    performSignOut()
+      .then(() =>navigation.push('Login'))
+  }
+
+
+
+  const performSignOut = async () => {
+    console.log("performSignOut Triggered")
+    const {error} = await supabase.auth.signOut();
+    if(error) throw error
+    console.log("Sign Out Successful")
   }
 
   const handleInboxClick= () => {
     console.log("handleInboxClick Triggered");
     navigation.push('Inbox');
   }
+
+  const handleSwipeLeft = () => {
+
+  }
+
+
 
   return (
   
