@@ -1,4 +1,4 @@
-import React, {useRef} from 'react';
+import React, {useEffect, useRef} from 'react';
 import {SafeAreaView, Image, Text, View, StyleSheet, Button, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Swiper from "react-native-deck-swiper"
@@ -45,8 +45,36 @@ const person = [
 
 
 export default function SwipeScreen() {
+  const cards = []
   const navigation=useNavigation();
   const swipeRef = useRef()
+
+  useEffect(() => {
+    loadCardData()
+  }, loadCardData)
+
+  const loadCardData = async () => {
+    const {data: user, error} = await supabase
+    .schema('public')
+    .from('users')
+    .select('*')
+    if (error) console.log("Error in loadCardData()! + " + error)
+
+    console.log("user: " + JSON.stringify(user))
+
+    user.map((person, i) => {
+
+      cards.push({
+      name: person.alias,
+      age: 24,
+      desc: "Placeholder for now",
+      pic: person.image,
+      id: i,
+    })
+
+
+    })
+      }
 
   const handleSignOutClick = () => {
     console.log("handleSignOutClick Triggered")
@@ -68,10 +96,21 @@ export default function SwipeScreen() {
     navigation.push('Inbox');
   }
 
-  const handleSwipeLeft = () => {
 
+  const retrieveCardData = () => {
+    console.log("inside retrieveCardData")
+  
+    return cards 
+  }
+  
+  const handleSwipeLeft = (cardIndex) => {
+    console.log("Swipe Pass");
+    console.log(cardIndex)
   }
 
+  const handleSwipeRight = (cardIndex) => {
+    console.log("Swipe Match")
+  }
 
 
   return (
@@ -106,17 +145,15 @@ export default function SwipeScreen() {
               containerStyle={{
                 backgroundColor:"transparent",
               }}
-              cards={person}
+              cards={ retrieveCardData()}
               stackSize={5}
               cardIndex={0}
               animateCardOpacity
               verticalSwipe={false}
-              onSwipedLeft={(cardIndex)=>{
-                console.log("Swipe Pass");
-              }}
-              onSwipedRight={(CardIndex)=>{
-                console.log("Swipe Match");
-              }}
+              onSwipedLeft={(cardIndex)=>handleSwipeLeft(cardIndex)
+              }
+              onSwipedRight={(cardIndex)=>handleSwipeRight(cardIndex)
+              }
               overlayLabels={{
                 left:{
                   title:"NOPE",
@@ -141,7 +178,7 @@ export default function SwipeScreen() {
                   <View key={card.id} className="bg-white h-3/4 rounded-xl relative">
                     <Image 
                       className="absolute top-0 h-full w-full rounded-xl"
-                      source = {{uri: card.pic[0]}}
+                      source = {{uri: card.pic}}
                     />
                     <View className="absolute bottom-0 bg-white w-full h-20 justify-between items-center flex-row px-6 py-2 rounded-b-xl shadow-xl">
                       <View>
