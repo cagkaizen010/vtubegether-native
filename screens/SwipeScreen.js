@@ -5,53 +5,33 @@ import Swiper from "react-native-deck-swiper"
 import {Entypo, Ionicons} from "@expo/vector-icons"
 import { supabase } from '../lib/helper/supabaseClient'
 
-const person = [
-  {
-    name: "Yanapii",
-    // cellName: 'Yanapii',
-    age: 30,
-    desc: "Green cozy cat looking to make friends.",
-    pic: [
-      "https://pbs.twimg.com/media/FYb32DnaAAA3mq5?format=jpg&name=900x900",
-      "https://i.ytimg.com/vi/aZCkIDgG8Ek/oar2.jpg?sqp=-oaymwEYCJUDENAFSFqQAgHyq4qpAwcIARUAAIhC&rs=AOn4CLCoe4GwJzzpn3pbQgY1gZsZkRVmmw",
-      "https://i.ytimg.com/vi/H1Hphla0MMA/oar2.jpg?sqp=-oaymwEYCJUDENAFSFqQAgHyq4qpAwcIARUAAIhC&rs=AOn4CLAGbp7vrNBvyLvWOBHRmCABVOC4ig"
-    ],
-    id :1,
-  },
-  {
-    name: "Yuandere",
-    age:28,
-    desc: "I am so excited for this to be a thing",
-    pic: ["https://cdna.artstation.com/p/assets/images/images/043/718/548/smaller_square/yuandere-werewolf-jpg.jpg?1638094099"],
-    id: 2,
-  },
-  {
-    name: "Harry",
-    age: 24,
-    desc: "Why have we created this?",
-    pic: ["https://ih1.redbubble.net/image.594684711.4150/bg,f8f8f8-flat,750x,075,f-pad,750x1000,f8f8f8.jpg"],
-    id: 3,
-  },
-  {
-    name: "Joe Gao",
-    age: 24,
-    desc: "Why Kaizen why",
-    pic :["https://media.licdn.com/dms/image/C4D03AQFpKHMMXj4jeQ/profile-displayphoto-shrink_200_200/0/1635399691690?e=2147483647&v=beta&t=9QxH21sJbOAkikEH70WFPOFpr68qKWxIgEOlsbrPqaE"],
-    id: 4,
-  }
-];
-
 
 
 
 export default function SwipeScreen() {
-  const cards = []
+  let cards = []
+  let currentUser_uid = ""
   const navigation=useNavigation();
   const swipeRef = useRef()
 
   useEffect(() => {
-    loadCardData()
-  }, loadCardData)
+    getCurrentUser()
+      .then(() =>loadCardData())
+      .catch((error) => {console.log(error)})
+  }, [getCurrentUser, loadCardData])
+
+  const getCurrentUser = async () => {
+    const {data: user, error} = await supabase.auth.getSession();
+    if (error) {
+      console.log(error)
+      throw error
+    }
+    
+    // console.log("user: " + JSON.stringify(user.session.user.id))
+
+    currentUser_uid = user.session.user.id
+    // console.log("currentUser_uid: " + currentUser_uid)
+  }
 
   const loadCardData = async () => {
     const {data: user, error} = await supabase
@@ -60,22 +40,46 @@ export default function SwipeScreen() {
     .select('*')
     if (error) console.log("Error in loadCardData()! + " + error)
 
-    console.log("user: " + JSON.stringify(user))
 
     user.map((person, i) => {
 
+      currentUser_uid == person.user_uid ?
+      console.log("currentUser detected, skipping card publish") :
       cards.push({
-      name: person.alias,
-      age: 24,
-      desc: "Placeholder for now",
-      pic: person.image,
-      id: i,
+        name: person.alias,
+        user_uid: person.user_uid,
+        age: 24,
+        desc: "Placeholder for now",
+        pic: person.image,
+        id: i,
+      })
     })
+  }
 
+  const handleSwipeLeft = async (cardIndex) => {
 
-    })
-      }
+    let {data: userCheck, error} = await supabase
+    .schema('matches')
+    .from('users')
+    .select("*")
+    .eq(`user_uid`, currentUser_uid)
+    if (error) {
+      console.log(error)
+      throw error
+    }
 
+    if (userCheck) {
+      const {data, err} = await supabase
+      .schema('matches')
+      .from('users')
+      .update({user_uid, currentUser_uid})
+      .eq('accept_uids', '')
+      .select() 
+    
+    } 
+    else console.log('user_uid not found' )
+    
+  }
   const handleSignOutClick = () => {
     console.log("handleSignOutClick Triggered")
     performSignOut()
@@ -98,15 +102,11 @@ export default function SwipeScreen() {
 
 
   const retrieveCardData = () => {
-    console.log("inside retrieveCardData")
+    // console.log("inside retrieveCardData")
   
     return cards 
   }
   
-  const handleSwipeLeft = (cardIndex) => {
-    console.log("Swipe Pass");
-    console.log(cardIndex)
-  }
 
   const handleSwipeRight = (cardIndex) => {
     console.log("Swipe Match")
