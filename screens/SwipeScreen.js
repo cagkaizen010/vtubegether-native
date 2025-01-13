@@ -102,7 +102,6 @@ export default function SwipeScreen() {
 
 
   const retrieveCardData = () => {
-    // console.log("inside retrieveCardData")
   
     return cards 
   }
