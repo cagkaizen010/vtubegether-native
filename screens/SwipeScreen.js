@@ -56,30 +56,49 @@ export default function SwipeScreen() {
     })
   }
 
+
+  // Store reject data to prevent rejected users from showing in Swipe feed.
   const handleSwipeLeft = async (cardIndex) => {
 
-    let {data: userCheck, error} = await supabase
-    .schema('matches')
-    .from('users')
-    .select("*")
-    .eq(`user_uid`, currentUser_uid)
-    if (error) {
-      console.log(error)
-      throw error
+    const { error} = await supabase
+      .schema('matches')
+      .from('reject_uid')
+      .insert({
+        user_uid: currentUser_uid,
+        reject: cards[cardIndex].user_uid
+      })
+    if (error) console.log("ERROR! " + JSON.stringify(error))
+  }
+
+
+  const handleSwipeRight = async (cardIndex) => {
+// 1) Check if currentUser is inside [accept] column of swiped User.
+// - If yes, then display Match notification and establish chatroom between the two users. 
+//   Store swiped user in accept column.
+// - If no, Store swiped user in accept column
+
+    const {user: {userCheck} , error} = await supabase
+      .schema('matches')
+      .from('accept_uid')
+      .select('accept')
+      .eq('accept', currentUser_uid)
+    if (error) console.log("ERROR! " + JSON.stringify(error))
+
+    if (userCheck)
+      console.log("ITS A MATCH")
+    else {
+
+      const {error} = await supabase
+        .schema('matches')
+        .from('accept_uid')
+        .insert({
+          user_uid: currentUser_uid,
+          accept: cards[cardIndex].user_uid
+        })
     }
 
-    if (userCheck) {
-      const {data, err} = await supabase
-      .schema('matches')
-      .from('users')
-      .update({user_uid, currentUser_uid})
-      .eq('accept_uids', '')
-      .select() 
-    
-    } 
-    else console.log('user_uid not found' )
-    
   }
+
   const handleSignOutClick = () => {
     console.log("handleSignOutClick Triggered")
     performSignOut()
@@ -102,14 +121,11 @@ export default function SwipeScreen() {
 
 
   const retrieveCardData = () => {
-  
     return cards 
   }
   
 
-  const handleSwipeRight = (cardIndex) => {
-    console.log("Swipe Match")
-  }
+  
 
 
   return (
