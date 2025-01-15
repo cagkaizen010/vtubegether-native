@@ -80,7 +80,7 @@ class Actions extends Component {
                 )
             if (error) console.log("ERROR! " + JSON.stringify(error))
             
-
+            
 
         }
         catch (e) {
@@ -90,7 +90,6 @@ class Actions extends Component {
             state.loading = false
         }
     }
-
 
         return(
             <Animated.View 

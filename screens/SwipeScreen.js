@@ -77,24 +77,28 @@ export default function SwipeScreen() {
 //   Store swiped user in accept column.
 // - If no, Store swiped user in accept column
 
-    const {user: {userCheck} , error} = await supabase
+    console.log("User swiped right")
+
+    const {data: {userCheck} , error} = await supabase
       .schema('matches')
       .from('accept_uid')
       .select('accept')
+      .eq('user_uid', cards[cardIndex].user_uid)
       .eq('accept', currentUser_uid)
     if (error) console.log("ERROR! " + JSON.stringify(error))
 
     if (userCheck)
       console.log("ITS A MATCH")
     else {
-
-      const {error} = await supabase
+      console.log("adding into accept_uid")
+      const {err} = await supabase
         .schema('matches')
         .from('accept_uid')
         .insert({
           user_uid: currentUser_uid,
           accept: cards[cardIndex].user_uid
         })
+      if (err) console.log(error)
     }
 
   }
