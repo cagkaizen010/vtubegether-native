@@ -72,23 +72,23 @@ export default function SwipeScreen() {
 
 
   const handleSwipeRight = async (cardIndex) => {
-// 1) Check if currentUser is inside [accept] column of swiped User.
-// - If yes, then display Match notification and establish chatroom between the two users. 
-//   Store swiped user in accept column.
-// - If no, Store swiped user in accept column
 
     console.log("User swiped right")
+    console.log(cards[cardIndex].user_uid)
 
-    const {data: {userCheck} , error} = await supabase
+    const {data: userCheck , error} = await supabase
       .schema('matches')
       .from('accept_uid')
-      .select('accept')
+      .select('')
       .eq('user_uid', cards[cardIndex].user_uid)
       .eq('accept', currentUser_uid)
     if (error) console.log("ERROR! " + JSON.stringify(error))
 
-    if (userCheck)
-      console.log("ITS A MATCH")
+    // console.log("userCheck: " + JSON.stringify(userCheck))
+
+    if (userCheck){
+      createChat(cards[cardIndex].user_uid)
+    }
     else {
       console.log("adding into accept_uid")
       const {err} = await supabase
@@ -100,7 +100,20 @@ export default function SwipeScreen() {
         })
       if (err) console.log(error)
     }
+  }
 
+  const createChat = async (i) => {
+
+    const {data, error} = await supabase
+      .schema('public')
+      .from('inbox')
+      .insert([{
+        last_message: "Say hello!"
+      }])
+      .select()
+    if (error) console.log("ERROR! " + JSON.stringify(error))
+
+    console.log("ITS A MATCH")
   }
 
   const handleSignOutClick = () => {
