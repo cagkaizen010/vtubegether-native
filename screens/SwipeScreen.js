@@ -88,6 +88,7 @@ export default function SwipeScreen() {
 
     if (userCheck){
       createChat(cards[cardIndex].user_uid)
+
     }
     else {
       console.log("adding into accept_uid")
@@ -102,18 +103,35 @@ export default function SwipeScreen() {
     }
   }
 
-  const createChat = async (i) => {
+  const createChat = async (card_uid) => {
+
+    const {data: currentUser_id} = await supabase
+      .schema('public')
+      .from('users')
+      .select('id')
+      .eq('user_uid', currentUser_uid)
+
+    const {data: cardUser_id} = await supabase
+      .schema('public')
+      .from('users')
+      .select('id')
+      .eq('user_uid', card_uid)
+
+    console.log("currentUser_id: " + JSON.stringify(currentUser_id[0].id))
+    console.log("cardUser_id: " + JSON.stringify(cardUser_id[0]))
 
     const {data, error} = await supabase
       .schema('public')
       .from('inbox')
       .insert([{
+        last_sent_user_id: currentUser_id[0].id,
         last_message: "Say hello!"
       }])
       .select()
     if (error) console.log("ERROR! " + JSON.stringify(error))
 
-    console.log("ITS A MATCH")
+
+    // console.log("ITS A MATCH")
   }
 
   const handleSignOutClick = () => {
