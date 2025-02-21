@@ -73,22 +73,21 @@ export default function SwipeScreen() {
 
   const handleSwipeRight = async (cardIndex) => {
 
-    console.log("User swiped right")
-    console.log(cards[cardIndex].user_uid)
+    // console.log("User swiped right")
+    // console.log(cards[cardIndex].user_uid)
 
     const {data: userCheck , error} = await supabase
       .schema('matches')
       .from('accept_uid')
-      .select('')
+      .select('*')
       .eq('user_uid', cards[cardIndex].user_uid)
       .eq('accept', currentUser_uid)
     if (error) console.log("ERROR! " + JSON.stringify(error))
 
-    // console.log("userCheck: " + JSON.stringify(userCheck))
+    console.log("userCheck: " + JSON.stringify(userCheck))
 
     if (userCheck){
       createChat(cards[cardIndex].user_uid)
-
     }
     else {
       console.log("adding into accept_uid")

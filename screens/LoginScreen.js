@@ -1,23 +1,24 @@
-import { useNavigation} from '@react-navigation/native'
-import Animated, {FadeIn, FadeInUp, FadeInDown, FadeOut} from 'react-native-reanimated'
-import React from 'react'
-import { Alert, KeyboardAvoidingView, TextInput, TouchableOpacity } from 'react-native'
+import React, {useEffect} from 'react'
+import Animated, {FadeInUp, FadeInDown} from 'react-native-reanimated'
+import {  KeyboardAvoidingView, TextInput, TouchableOpacity } from 'react-native'
 import {View, Image, StatusBar, Text} from 'react-native'
+import { useNavigation} from '@react-navigation/native'
 import { supabase } from '../lib/helper/supabaseClient'
+import { setItemAsync, getItemAsync } from 'expo-secure-store'
 import { makeRedirectUri } from 'expo-auth-session'
 import * as QueryParams from "expo-auth-session/build/QueryParams"
 import * as WebBrowser from "expo-web-browser"
 import * as Linking from "expo-linking"
 
-const redirectTo = makeRedirectUri();
-let email = '';
-let password = '';
+// const redirectTo = makeRedirectUri();
 
+// let email = '';
+// let password = '';
 
 const createSessionFromUrl = async (url) => {
     const {params, errorCode} = QueryParams.getQueryParams(url);
-
     if (errorCode) throw new Error(errorCode);
+
     const {access_token, refresh_token} = params;
     globalAccessToken = access_token;
     if (!access_token) return;
@@ -31,19 +32,26 @@ const createSessionFromUrl = async (url) => {
 }
 
 
-const signInWithEmail = async () => {
+const signInWithEmail = async (cred) => {
+
+
     const { data, error} = await supabase.auth.signInWithPassword({
-        email: email,
-        password: password,
+        email: cred.email,
+        password: cred.password,
     })
     if (error){
         console.log(error)
         throw error
     }
 
-    getSession();
+    try {
+        await setItemAsync('userEmail', cred.email)
 
-    
+    }
+    catch (error) {
+        console.log("Error saving email to SecureStore", error)
+    }
+    // getSession();
 }
 
 const getSession = async () => {
@@ -54,53 +62,53 @@ const getSession = async () => {
     }
     // console.log("DATA AFTER GETSESSION(): " + JSON.stringify(data.session.user, null, 1))
 }
-const performOAuthGoogle = async () => {
-    const {data, error} = await supabase.auth.signInWithOAuth({
-            provider: 'google',
-            options: {
-                redirectTo,
-                skipBrowserRedirect: true,
-            }
-    })
+// const performOAuthGoogle = async () => {
+//     const {data, error} = await supabase.auth.signInWithOAuth({
+//             provider: 'google',
+//             options: {
+//                 redirectTo,
+//                 skipBrowserRedirect: true,
+//             }
+//     })
 
-    if (error) throw error;
+//     if (error) throw error;
 
-    const res = await WebBrowser.openAuthSessionAsync(
-        data?.url ?? "",
-        redirectTo
-    );
-
-    
-    if (res.type === "success") {
-        const {url} = res;
-        await createSessionFromUrl(url);
-        console.log("Login Successful")
-    }
-};
-
-const performOAuthGithub = async () => {
-    const {data, error} = await supabase.auth.signInWithOAuth({
-            provider: 'github',
-            options: {
-                redirectTo,
-                skipBrowserRedirect: true,
-            }
-    })
-
-    if (error) throw error;
-
-    const res = await WebBrowser.openAuthSessionAsync(
-        data?.url ?? "",
-        redirectTo
-    );
+//     const res = await WebBrowser.openAuthSessionAsync(
+//         data?.url ?? "",
+//         redirectTo
+//     );
 
     
-    if (res.type === "success") {
-        const {url} = res;
-        await createSessionFromUrl(url);
-        console.log("Login Successful")
-    }
-};
+//     if (res.type === "success") {
+//         const {url} = res;
+//         await createSessionFromUrl(url);
+//         console.log("Login Successful")
+//     }
+// };
+
+// const performOAuthGithub = async () => {
+//     const {data, error} = await supabase.auth.signInWithOAuth({
+//             provider: 'github',
+//             options: {
+//                 redirectTo,
+//                 skipBrowserRedirect: true,
+//             }
+//     })
+
+//     if (error) throw error;
+
+//     const res = await WebBrowser.openAuthSessionAsync(
+//         data?.url ?? "",
+//         redirectTo
+//     );
+
+    
+//     if (res.type === "success") {
+//         const {url} = res;
+//         await createSessionFromUrl(url);
+//         console.log("Login Successful")
+//     }
+// };
 
 const getUserData = async () => {
 
@@ -110,27 +118,53 @@ const getUserData = async () => {
     return user.aud;
 }
 
+
+
+
 export default function LoginScreen() {
 
     const navigation = useNavigation();
     const url = Linking.useURL();
     if (url) createSessionFromUrl(url); 
 
-    const handleEmailLogIn = () => {
-        // signInWithEmail().then(() => authSuccess == true ? navigation.push('Swipe') : console.log("Invalid Login Credentials."))
-        signInWithEmail()
-    }
-    const handleClickGoogle = () => {
-        // performOAuthGoogle().then(() => authSuccess == true ? navigation.push('Swipe'): console.log("no pee pee found"))
-        performOAuthGoogle();
-    }
-    const handleClickGithub = () => {
-        // performOAuthGithub().then(() => authSuccess == true ? navigation.push('Swipe'): console.log("no pee pee found"))
-        performOAuthGithub();
-    }
-
     [email, onChangeUsername] = React.useState();
     [password, onChangePassword] = React.useState();
+
+    useEffect(() => {
+        const getEmailFromStore = async () => {
+            try{
+                const storedEmail = await getItemAsync('userEmail')
+                if (storedEmail) {
+                    onChangeUsername(storedEmail)
+
+                } else {
+                    console.log("Email not found in SecureStore")
+                }
+
+            } catch(error) {
+
+            }
+        }
+        getEmailFromStore();
+    })
+
+    const handleEmailLogIn = () => {
+        // signInWithEmail().then(() => authSuccess == true ? navigation.push('Swipe') : console.log("Invalid Login Credentials."))
+        signInWithEmail({
+            email: email,
+            password: password,
+        })
+        // console.log(password)
+    }
+
+    // const handleClickGoogle = () => {
+    //     // performOAuthGoogle().then(() => authSuccess == true ? navigation.push('Swipe'): console.log("no pee pee found"))
+    //     performOAuthGoogle();
+    // }
+    // const handleClickGithub = () => {
+    //     // performOAuthGithub().then(() => authSuccess == true ? navigation.push('Swipe'): console.log("no pee pee found"))
+    //     performOAuthGithub();
+    // }
 
     const subscription = supabase.auth.onAuthStateChange((event, session) => {
         // console.log(event, session)
@@ -186,10 +220,10 @@ export default function LoginScreen() {
                 {/* Form */}
                 <View className='flex items-center mx-4 space-y-4'>
                     <Animated.View entering={FadeInDown.duration(1000).springify()} className="bg-orange-100 p-5 rounded-2xl w-full">
-                        <TextInput onChangeText={onChangeUsername} placeholder='Email' placeholderTextColor={'gray'}/>
+                        <TextInput onChangeText={onChangeUsername} placeholder={email} placeholderTextColor={'gray'}/>
                     </Animated.View>
                     <Animated.View entering={FadeInDown.duration(200).springify()} className="bg-orange-100 p-5 rounded-2xl w-full mb-3">
-                        <TextInput secureTextEntry={true} onChangeText={onChangePassword} placeholder='Password' placeholderTextColor={'gray'} />
+                        <TextInput secureTextEntry={true} onChangeText={onChangePassword} placeholder={password} placeholderTextColor={'gray'} />
                     </Animated.View>
                     <Animated.View entering={FadeInDown.duration(400).springify()} className='w-full'>
                         <TouchableOpacity
@@ -204,7 +238,7 @@ export default function LoginScreen() {
                         <Text className='text-white'>Don't have an account?</Text>
                         <TouchableOpacity
                             onPress={()=>navigation.push('Signup')}>
-                            <Text className='text-sky-600 font-bold'> Signup</Text>
+                            <Text className='text-sky-600 font-bold' > Signup</Text>
                         </TouchableOpacity>
                     </Animated.View>
                 </View>

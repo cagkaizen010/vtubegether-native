@@ -39,7 +39,8 @@
     "react-native-web": "^0.19.13",
     "tailwindcss": "3.3.2",
     "twrnc": "3.3.2",
-    "react-native-gesture-handler": "~2.20.2"
+    "react-native-gesture-handler": "~2.20.2",
+    "@expo/metro-runtime": "~4.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.24.0"
