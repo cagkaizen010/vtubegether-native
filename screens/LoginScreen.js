@@ -6,14 +6,12 @@ import { useNavigation} from '@react-navigation/native'
 import { supabase } from '../lib/helper/supabaseClient'
 import { setItemAsync, getItemAsync } from 'expo-secure-store'
 import { makeRedirectUri } from 'expo-auth-session'
+import { getSession, clearMatchData } from '../components/testTools/testTools'
 import * as QueryParams from "expo-auth-session/build/QueryParams"
 import * as WebBrowser from "expo-web-browser"
 import * as Linking from "expo-linking"
 
-// const redirectTo = makeRedirectUri();
 
-// let email = '';
-// let password = '';
 
 const createSessionFromUrl = async (url) => {
     const {params, errorCode} = QueryParams.getQueryParams(url);
@@ -29,6 +27,7 @@ const createSessionFromUrl = async (url) => {
     });
     if (error) throw error;
     return data.session;
+
 }
 
 
@@ -54,14 +53,7 @@ const signInWithEmail = async (cred) => {
     // getSession();
 }
 
-const getSession = async () => {
-    const {data, error} = await supabase.auth.getSession();
-    if (error) {
-        console.log(error)
-        throw error
-    }
-    // console.log("DATA AFTER GETSESSION(): " + JSON.stringify(data.session.user, null, 1))
-}
+
 // const performOAuthGoogle = async () => {
 //     const {data, error} = await supabase.auth.signInWithOAuth({
 //             provider: 'google',
@@ -110,14 +102,6 @@ const getSession = async () => {
 //     }
 // };
 
-const getUserData = async () => {
-
-    const {data: {user}} = await supabase.auth.getUser();
-    console.log("Retrieving User Data")
-    console.log(user.aud);
-    return user.aud;
-}
-
 
 
 
@@ -146,6 +130,7 @@ export default function LoginScreen() {
             }
         }
         getEmailFromStore();
+        // getSession();
     })
 
     const handleEmailLogIn = () => {
@@ -170,11 +155,14 @@ export default function LoginScreen() {
         // console.log(event, session)
 
         if (event === 'INITIAL_SESSION') {
-            // console.log("---");
         // handle initial session
         } else if (event === 'SIGNED_IN') {
             // console.log("Inside SIGNED_IN");
             // console.log("flag: " + (JSON.stringify(session.user.user_metadata) && navigation.push('Swipe')) )
+
+            getSession()
+            .then((data) => clearMatchData(data))
+
 
             if (!JSON.stringify(session.user.user_metadata.image)){
                 if(!JSON.stringify(session.user.user_metadata.alias))
@@ -196,8 +184,6 @@ export default function LoginScreen() {
             // handle token refreshed event
         } else if (event === 'USER_UPDATED') {
             console.log("Inside USER_UPDATED");
-            getSession();
-            // handle user updated event
         }
     })
 

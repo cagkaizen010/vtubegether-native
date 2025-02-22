@@ -44,7 +44,7 @@ export default function SwipeScreen() {
     user.map((person, i) => {
 
       currentUser_uid == person.user_uid ?
-      console.log("currentUser detected, skipping card publish") :
+      <></> :
       cards.push({
         name: person.alias,
         user_uid: person.user_uid,
@@ -83,6 +83,7 @@ export default function SwipeScreen() {
       .eq('user_uid', cards[cardIndex].user_uid)
       .eq('accept', currentUser_uid)
     if (error) console.log("ERROR! " + JSON.stringify(error))
+
 
     console.log("userCheck: " + JSON.stringify(userCheck))
 
@@ -158,9 +159,6 @@ export default function SwipeScreen() {
     return cards 
   }
   
-
-  
-
 
   return (
   
