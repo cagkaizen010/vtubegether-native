@@ -2,15 +2,14 @@ import React, {useEffect} from 'react'
 import Animated, {FadeInUp, FadeInDown} from 'react-native-reanimated'
 import {  KeyboardAvoidingView, TextInput, TouchableOpacity } from 'react-native'
 import {View, Image, StatusBar, Text} from 'react-native'
-import { useNavigation} from '@react-navigation/native'
 import { supabase } from '../lib/helper/supabaseClient'
-import { setItemAsync, getItemAsync } from 'expo-secure-store'
-import { makeRedirectUri } from 'expo-auth-session'
 import { getSession, clearMatchData } from '../components/testTools/testTools'
+import { signInWithEmail } from '../components/user/authHandler'
+// import { getSession, clearMatchData} from "../testTools/testTools"
 import * as QueryParams from "expo-auth-session/build/QueryParams"
-import * as WebBrowser from "expo-web-browser"
 import * as Linking from "expo-linking"
 
+import { useNavigation} from '@react-navigation/native'
 
 
 const createSessionFromUrl = async (url) => {
@@ -26,120 +25,67 @@ const createSessionFromUrl = async (url) => {
         refresh_token
     });
     if (error) throw error;
+    console.log("data.session: " + data.session)
     return data.session;
 
 }
 
 
-const signInWithEmail = async (cred) => {
-
-
-    const { data, error} = await supabase.auth.signInWithPassword({
-        email: cred.email,
-        password: cred.password,
-    })
-    if (error){
-        console.log(error)
-        throw error
-    }
-
-    try {
-        await setItemAsync('userEmail', cred.email)
-
-    }
-    catch (error) {
-        console.log("Error saving email to SecureStore", error)
-    }
-    // getSession();
-}
-
-
-// const performOAuthGoogle = async () => {
-//     const {data, error} = await supabase.auth.signInWithOAuth({
-//             provider: 'google',
-//             options: {
-//                 redirectTo,
-//                 skipBrowserRedirect: true,
-//             }
-//     })
-
-//     if (error) throw error;
-
-//     const res = await WebBrowser.openAuthSessionAsync(
-//         data?.url ?? "",
-//         redirectTo
-//     );
-
-    
-//     if (res.type === "success") {
-//         const {url} = res;
-//         await createSessionFromUrl(url);
-//         console.log("Login Successful")
-//     }
-// };
-
-// const performOAuthGithub = async () => {
-//     const {data, error} = await supabase.auth.signInWithOAuth({
-//             provider: 'github',
-//             options: {
-//                 redirectTo,
-//                 skipBrowserRedirect: true,
-//             }
-//     })
-
-//     if (error) throw error;
-
-//     const res = await WebBrowser.openAuthSessionAsync(
-//         data?.url ?? "",
-//         redirectTo
-//     );
-
-    
-//     if (res.type === "success") {
-//         const {url} = res;
-//         await createSessionFromUrl(url);
-//         console.log("Login Successful")
-//     }
-// };
-
-
-
-
 export default function LoginScreen() {
 
+    [email, onChangeUsername] = React.useState();
+    [password, onChangePassword] = React.useState();
     const navigation = useNavigation();
     const url = Linking.useURL();
     if (url) createSessionFromUrl(url); 
 
-    [email, onChangeUsername] = React.useState();
-    [password, onChangePassword] = React.useState();
+const subscription = supabase.auth.onAuthStateChange((event, session) => {
+    // console.log(event, session)
+
+    if (event === 'INITIAL_SESSION') {
+    // handle initial session
+    console.log("Initial Session")
+    } else if (event === 'SIGNED_IN') {
+        // console.log("Inside SIGNED_IN");
+        // console.log("flag: " + (JSON.stringify(session.user.user_metadata) && navigation.push('Swipe')) )
+
+        getSession()
+        .then((data) => clearMatchData(data))
+
+
+        if (!JSON.stringify(session.user.user_metadata.image)){
+            if(!JSON.stringify(session.user.user_metadata.alias))
+                navigation.push('SignUpAliasAdd')
+            else navigation.push('SignUpImageAdd')
+        }
+        // else navigation.push('SignUpConfirm')
+        else navigation.push('Swipe')
+
+        // handle sign in event
+    } else if (event === 'SIGNED_OUT') {
+        console.log("Inside SIGNED_OUT");
+        // handle sign out event
+    } else if (event === 'PASSWORD_RECOVERY') {
+        console.log("Inside PASSWORD_RECOVERY");
+        // handle password recovery event
+    } else if (event === 'TOKEN_REFRESHED') {
+        console.log("Inside TOKEN_REFRESHED");
+        // handle token refreshed event
+    } else if (event === 'USER_UPDATED') {
+        console.log("Inside USER_UPDATED");
+    }
+})
 
     useEffect(() => {
-        const getEmailFromStore = async () => {
-            try{
-                const storedEmail = await getItemAsync('userEmail')
-                if (storedEmail) {
-                    onChangeUsername(storedEmail)
 
-                } else {
-                    console.log("Email not found in SecureStore")
-                }
-
-            } catch(error) {
-
-            }
-        }
-        getEmailFromStore();
         // getSession();
     })
 
     const handleEmailLogIn = () => {
-        // signInWithEmail().then(() => authSuccess == true ? navigation.push('Swipe') : console.log("Invalid Login Credentials."))
         signInWithEmail({
             email: email,
             password: password,
         })
-        // console.log(password)
     }
 
     // const handleClickGoogle = () => {
@@ -150,42 +96,6 @@ export default function LoginScreen() {
     //     // performOAuthGithub().then(() => authSuccess == true ? navigation.push('Swipe'): console.log("no pee pee found"))
     //     performOAuthGithub();
     // }
-
-    const subscription = supabase.auth.onAuthStateChange((event, session) => {
-        // console.log(event, session)
-
-        if (event === 'INITIAL_SESSION') {
-        // handle initial session
-        } else if (event === 'SIGNED_IN') {
-            // console.log("Inside SIGNED_IN");
-            // console.log("flag: " + (JSON.stringify(session.user.user_metadata) && navigation.push('Swipe')) )
-
-            getSession()
-            .then((data) => clearMatchData(data))
-
-
-            if (!JSON.stringify(session.user.user_metadata.image)){
-                if(!JSON.stringify(session.user.user_metadata.alias))
-                    navigation.push('SignUpAliasAdd')
-                else navigation.push('SignUpImageAdd')
-            }
-            // else navigation.push('SignUpConfirm')
-            else navigation.push('Swipe')
-
-            // handle sign in event
-        } else if (event === 'SIGNED_OUT') {
-            console.log("Inside SIGNED_OUT");
-            // handle sign out event
-        } else if (event === 'PASSWORD_RECOVERY') {
-            console.log("Inside PASSWORD_RECOVERY");
-            // handle password recovery event
-        } else if (event === 'TOKEN_REFRESHED') {
-            console.log("Inside TOKEN_REFRESHED");
-            // handle token refreshed event
-        } else if (event === 'USER_UPDATED') {
-            console.log("Inside USER_UPDATED");
-        }
-    })
 
 
     return (

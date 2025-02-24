@@ -4,36 +4,38 @@ import { useNavigation } from '@react-navigation/native';
 import Swiper from "react-native-deck-swiper"
 import {Entypo, Ionicons} from "@expo/vector-icons"
 import { supabase } from '../lib/helper/supabaseClient'
-
+import { getSession } from '../components/testTools/testTools';
 
 
 
 export default function SwipeScreen() {
   let cards = []
-  let currentUser_uid = ""
+  let currentUser_uid =""
   const navigation=useNavigation();
   const swipeRef = useRef()
 
   useEffect(() => {
-    getCurrentUser()
-      .then(() =>loadCardData())
+    getSession()
+      .then((data) =>loadCardData(data))
       .catch((error) => {console.log(error)})
-  }, [getCurrentUser, loadCardData])
+  }, [getSession, loadCardData])
 
-  const getCurrentUser = async () => {
-    const {data: user, error} = await supabase.auth.getSession();
-    if (error) {
-      console.log(error)
-      throw error
-    }
+  // const getCurrentUser = async () => {
+  //   const {data: user, error} = await supabase.auth.getSession();
+  //   if (error) {
+  //     console.log(error)
+  //     throw error
+  //   }
     
-    // console.log("user: " + JSON.stringify(user.session.user.id))
+  //   // console.log("user: " + JSON.stringify(user.session.user.id))
 
-    currentUser_uid = user.session.user.id
-    // console.log("currentUser_uid: " + currentUser_uid)
-  }
+  //   currentUser_uid = user.session.user.id
+  //   // console.log("currentUser_uid: " + currentUser_uid)
+  // }
 
-  const loadCardData = async () => {
+  const loadCardData = async (data) => {
+    currentUser_uid = data
+    console.log("currentUser_uid: " + currentUser_uid)
     const {data: user, error} = await supabase
     .schema('public')
     .from('users')

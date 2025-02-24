@@ -7,7 +7,7 @@ const getSession= async () => {
         console.log(error)
         throw error
     }
-
+    // console.log(res.session.user)
     return res.session.user.id 
 }
 

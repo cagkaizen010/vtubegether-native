@@ -11,17 +11,19 @@ import InboxScreen from "./screens/Inbox.js"
 import LoginScreen, {authSuccess, globalAccessToken}  from './screens/LoginScreen.js'
 import * as SecureStore from 'expo-secure-store'
 
+// import { getSession, clearMatchData} from "../testTools/testTools"
+import { getSession, clearMatchData } from './components/testTools/testTools.js';
+import { useNavigation} from '@react-navigation/native'
 import { supabase } from './lib/helper/supabaseClient'
 
 const Stack = createNativeStackNavigator();
 
 function App({navigation}) {
 
+
   return (
       <NavigationContainer>
         <Stack.Navigator screenOptions={{headerShown: false, gestureEnabled: false}}>
-              {(authSuccess != true) &&
-              <>
                 <Stack.Screen name="Login" component={LoginScreen} />
                 <Stack.Screen name="Signup" component={SignupScreen} />
                 <Stack.Screen name="SignUpAliasAdd" component={SignUpAliasAddScreen}/>
@@ -29,8 +31,6 @@ function App({navigation}) {
                 <Stack.Screen name="Messages" component={MessagesScreen} />
                 <Stack.Screen name="Inbox" component={InboxScreen} />
                 <Stack.Screen name="SignUpConfirm" component={SignUpConfirmScreen} />
-              </> 
-              }
               
               <Stack.Screen name="Swipe" component={SwipeScreen} />
         </Stack.Navigator>
