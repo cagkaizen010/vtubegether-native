@@ -1,17 +1,67 @@
 import { supabase } from "../../lib/helper/supabaseClient"
 
 
-const getSession= async () => {
+const getUserUID= async () => {
     const {data: res, error} = await supabase.auth.getSession();
     if (error) {
         console.log(error)
         throw error
     }
-    // console.log(res.session.user)
     return res.session.user.id 
 }
 
 const getUserData = async () => {
+    let uid = ""
+    const {data: res, error} = await supabase.auth.getSession()
+    if(error) {
+        console.log(error)
+        throw error
+    }
+    uid = res.session.user.id
+
+    const {data: user_data, err} = await supabase
+    .schema('public')
+    .from('users')
+    .select('*')
+    .eq('user_uid', uid)
+    if (err) {
+        console.log(err)
+        throw err
+    }
+    // console.log("user_data[0]: " + JSON.stringify(user_data[0]))
+    return user_data[0]
+
+}
+
+const getUserDatax = async () => {
+    let user_data= ""
+
+    const returnUserID = async (uid) => {
+        const {data: res, error} = await supabase
+        .schema('public')
+        .from('users')
+        .select('*')
+        .eq('user_uid', uid)
+        if (error) { 
+            console.log(error)
+            throw(error)
+        }
+
+        // console.log(res[0].id)
+        // user_id = res[0].id
+        return res
+    }
+
+    await getUserUID()
+    .then((uid) => returnUserID(uid))
+    .then((data) => {user_data = data[0]})
+
+    // console.log("user_id: " + JSON.stringify(user_id))
+    return user_data
+
+}
+
+const getUserAUD = async () => {
 
     const {data: {user}} = await supabase.auth.getUser()
     console.log(user.aud)
@@ -32,4 +82,4 @@ const clearMatchData = async (user_uid) => {
 }
 
 
-export {getUserData, getSession, clearMatchData}
+export {getUserAUD, getUserUID, getUserData, clearMatchData}

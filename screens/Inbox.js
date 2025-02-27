@@ -1,10 +1,11 @@
 import React, { useState } from 'react'
 import { StyleSheet, TouchableOpacity, View, SafeAreaView, Image, ScrollView, Text} from 'react-native'
-import { useNavigation } from '@react-navigation/native';
-import { useEffect } from 'react';
+import { useNavigation } from '@react-navigation/native'
+import { useEffect } from 'react'
 import tw from 'twrnc'
 import {Icon} from 'react-native-elements'
-import { supabase } from '../lib/helper/supabaseClient';
+import { supabase } from '../lib/helper/supabaseClient'
+import {getUserUID} from '../components/testTools/testTools'
 // import userData from '../components/message/data/userData'
 
 export default function InboxScreen(){
@@ -17,8 +18,7 @@ export default function InboxScreen(){
         const getAllInformation = async () => {
             onChangeInboxData(null)
 
-
-            getCurrentSession()
+            getUserUID()
             .then((result) => getInbox(result))
             .then((data) => uploadInboxData(data))
             .catch((error) => {console.log(error)})
@@ -29,45 +29,35 @@ export default function InboxScreen(){
     }, [])
 
 
-    const getCurrentSession= async () => {
-        console.log("Getting Inbox")
-        let tempID = "ee994e0e-9d51-4f93-9922-ffec5f0f8710"
-        const {data: user, error} = await supabase.auth.getSession();
-        if (error) {
-            console.log(error)
-            throw error
-        }
-        // console.log(JSON.stringify(user.session.user.id, null, 1))
+    // const getCurrentSession= async () => {
+    //     console.log("Getting Inbox")
+    //     const {data: user, error} = await supabase.auth.getSession();
+    //     if (error) {
+    //         console.log(error)
+    //         throw error
+    //     }
+    //     // console.log(JSON.stringify(user.session.user.id, null, 1))
 
-        return user;
+    //     return user;
         
-    }
-    const getInbox = async (result) => {
+    // }
+    const getInbox = async (user_id) => {
         let chatChannels = [] 
         let usersID = null;
         let inbox_uuid = []
 
-        let { data: currentUser, er} = await supabase
-        .from('users')
-        .select('id')
-        .eq("user_uid", result.session.user.id)
-        if (err) {
-            console.log("INSIDE currentUser retrieval: " + er)
-            throw er
-        }
-
-        usersID = currentUser[0].id
 
         let { data: inbox_uuid_array, err} = await supabase
         .from('inbox_participants')
         .select(`
             inbox_uid
             `)
-        .eq("user_id", usersID)
+        .eq("user_id", user_id)
         if (err) {
             console.log("INSIDE currentUser_inbox_uid retrieval: " + err)
             throw err
         }
+        // console.log("inbox_uuid_array: " + inbox_uuid_array)
 
         inbox_uuid_array.map((inboxes, i) => {
             inbox_uuid.push(inboxes.inbox_uid) 
@@ -86,7 +76,7 @@ export default function InboxScreen(){
             )
             `)
         .in('inbox_uid', inbox_uuid)
-        .neq('user_id', usersID)
+        .neq('user_id', user_id)
         if (erro) {
             console.log("INSIDE currentUser_inbox_uid retrieval: " + erro)
             throw erro

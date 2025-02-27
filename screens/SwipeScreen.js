@@ -1,41 +1,40 @@
-import React, {useEffect, useRef} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {SafeAreaView, Image, Text, View, StyleSheet, Button, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Swiper from "react-native-deck-swiper"
 import {Entypo, Ionicons} from "@expo/vector-icons"
 import { supabase } from '../lib/helper/supabaseClient'
-import { getSession } from '../components/testTools/testTools';
-
-
+import { getUserID ,getUserUID} from '../components/testTools/testTools';
+import { signOut } from '../components/user/authHandler';
+import { data } from '../components/user/userData';
+import { loadUserData } from '../components/user/userData';
 
 export default function SwipeScreen() {
-  let cards = []
-  let currentUser_uid =""
+  let [cards, setCards] = useState([])
+  let [currentUser_uid, setUID] = useState()
+  let [currentUser_id, setID] = useState()
   const navigation=useNavigation();
   const swipeRef = useRef()
 
   useEffect(() => {
-    getSession()
-      .then((data) =>loadCardData(data))
-      .catch((error) => {console.log(error)})
-  }, [getSession, loadCardData])
+    console.log(data)
+    setUID(data.user_uid)
+    setID(data.user_id)
+    loadCardData()
+    // loadCardData()
 
-  // const getCurrentUser = async () => {
-  //   const {data: user, error} = await supabase.auth.getSession();
-  //   if (error) {
-  //     console.log(error)
-  //     throw error
-  //   }
+  }, [getUserUID, loadCardData ])
+
+
+  const loadCardData = async () => {
+    // Load user's UID
+    // console.log(data)
+    // setUID(data.user_uid)
     
-  //   // console.log("user: " + JSON.stringify(user.session.user.id))
+    // setID(data.user_id)
 
-  //   currentUser_uid = user.session.user.id
-  //   // console.log("currentUser_uid: " + currentUser_uid)
-  // }
-
-  const loadCardData = async (data) => {
-    currentUser_uid = data
     console.log("currentUser_uid: " + currentUser_uid)
+    console.log("currentUser_id: " + currentUser_id)
     const {data: user, error} = await supabase
     .schema('public')
     .from('users')
@@ -45,23 +44,23 @@ export default function SwipeScreen() {
 
     user.map((person, i) => {
 
-      currentUser_uid == person.user_uid ?
+      (data.user_uid == person.user_uid) ?
       <></> :
-      cards.push({
+      setCards(x=> [...x,{
         name: person.alias,
         user_uid: person.user_uid,
         age: 24,
         desc: "Placeholder for now",
         pic: person.image,
         id: i,
-      })
+      }])
     })
   }
 
 
   // Store reject data to prevent rejected users from showing in Swipe feed.
   const handleSwipeLeft = async (cardIndex) => {
-
+    console.log(currentUser_id)
     const { error} = await supabase
       .schema('matches')
       .from('reject_uid')
@@ -75,62 +74,58 @@ export default function SwipeScreen() {
 
   const handleSwipeRight = async (cardIndex) => {
 
-    // console.log("User swiped right")
-    // console.log(cards[cardIndex].user_uid)
-
+    let card_uid = cards[cardIndex].user_uid
+    // console.log("currentUser_uid: " + currentUser_uid)
     const {data: userCheck , error} = await supabase
       .schema('matches')
       .from('accept_uid')
       .select('*')
-      .eq('user_uid', cards[cardIndex].user_uid)
+      .eq('user_uid', card_uid)
       .eq('accept', currentUser_uid)
-    if (error) console.log("ERROR! " + JSON.stringify(error))
+    if (error) console.log("Error inside userCheck! " + JSON.stringify(error))
 
 
-    console.log("userCheck: " + JSON.stringify(userCheck))
+    // console.log("userCheck: " + JSON.stringify(userCheck))
 
     if (userCheck){
-      createChat(cards[cardIndex].user_uid)
+      // console.log("UserID: " + getUserID().then((pay) => {console.log(pay)}))
+      createChat(card_uid)
     }
-    else {
-      console.log("adding into accept_uid")
-      const {err} = await supabase
-        .schema('matches')
-        .from('accept_uid')
-        .insert({
-          user_uid: currentUser_uid,
-          accept: cards[cardIndex].user_uid
-        })
-      if (err) console.log(error)
-    }
+    
+    // console.log("adding into accept_uid")
+    const {err} = await supabase
+      .schema('matches')
+      .from('accept_uid')
+      .insert({
+        user_uid: currentUser_uid,
+        accept: card_uid
+      })
+    if (err) console.log(error)
+    
   }
 
-  const createChat = async (card_uid) => {
+  const createChat = async (user_uid) => {
+    console.log("creating chat")
 
-    const {data: currentUser_id} = await supabase
+    const {data: cardUser_id, e} = await supabase
       .schema('public')
       .from('users')
       .select('id')
-      .eq('user_uid', currentUser_uid)
+      .eq('user_uid', user_uid)
+    if (e) console.log("Error in cardUser_id retrieval: ", error)
 
-    const {data: cardUser_id} = await supabase
-      .schema('public')
-      .from('users')
-      .select('id')
-      .eq('user_uid', card_uid)
-
-    console.log("currentUser_id: " + JSON.stringify(currentUser_id[0].id))
+    console.log("currentUser_id: " + currentUser_id)
     console.log("cardUser_id: " + JSON.stringify(cardUser_id[0]))
 
     const {data, error} = await supabase
       .schema('public')
       .from('inbox')
       .insert([{
-        last_sent_user_id: currentUser_id[0].id,
+        last_sent_user_id: currentUser_id,
         last_message: "Say hello!"
       }])
       .select()
-    if (error) console.log("ERROR! " + JSON.stringify(error))
+    if (error) console.log("ERROR in message insertion! " + JSON.stringify(error))
 
 
     // console.log("ITS A MATCH")
@@ -138,28 +133,22 @@ export default function SwipeScreen() {
 
   const handleSignOutClick = () => {
     console.log("handleSignOutClick Triggered")
-    performSignOut()
+    signOut()
       .then(() =>navigation.push('Login'))
   }
 
 
 
-  const performSignOut = async () => {
-    console.log("performSignOut Triggered")
-    const {error} = await supabase.auth.signOut();
-    if(error) throw error
-    console.log("Sign Out Successful")
-  }
+  // const performSignOut = async () => {
+  //   console.log("performSignOut Triggered")
+  //   const {error} = await supabase.auth.signOut();
+  //   if(error) throw error
+  //   console.log("Sign Out Successful")
+  // }
 
-  const handleInboxClick= () => {
-    console.log("handleInboxClick Triggered");
-    navigation.push('Inbox');
-  }
-
-
-  const retrieveCardData = () => {
-    return cards 
-  }
+  // const retrieveCardData = () => {
+  //   return cards 
+  // }
   
 
   return (
@@ -181,7 +170,7 @@ export default function SwipeScreen() {
             source={require("../components/img/logo.png")}
           />
         </TouchableOpacity>
-        <TouchableOpacity onPress={handleInboxClick}>
+        <TouchableOpacity onPress={() => {navigation.push('Inbox')}}>
           <Image
             className="h-10 w-10"
             source={require("../components/img/message.png")}
@@ -194,7 +183,8 @@ export default function SwipeScreen() {
               containerStyle={{
                 backgroundColor:"transparent",
               }}
-              cards={ retrieveCardData()}
+              // cards={ retrieveCardData()}
+              cards = {cards ? cards : <></>}
               stackSize={5}
               cardIndex={0}
               animateCardOpacity

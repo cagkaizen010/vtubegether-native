@@ -3,78 +3,56 @@ import Animated, {FadeInUp, FadeInDown} from 'react-native-reanimated'
 import {  KeyboardAvoidingView, TextInput, TouchableOpacity } from 'react-native'
 import {View, Image, StatusBar, Text} from 'react-native'
 import { supabase } from '../lib/helper/supabaseClient'
-import { getSession, clearMatchData } from '../components/testTools/testTools'
-import { signInWithEmail } from '../components/user/authHandler'
+import { getUserID, clearMatchData } from '../components/testTools/testTools'
 // import { getSession, clearMatchData} from "../testTools/testTools"
 import * as QueryParams from "expo-auth-session/build/QueryParams"
 import * as Linking from "expo-linking"
-
+import { signInWithEmail } from '../components/user/authHandler'
 import { useNavigation} from '@react-navigation/native'
+import { loadUserData } from '../components/user/userData'
 
 
-const createSessionFromUrl = async (url) => {
-    const {params, errorCode} = QueryParams.getQueryParams(url);
-    if (errorCode) throw new Error(errorCode);
+// const createSessionFromUrl = async (url) => {
+//     const {params, errorCode} = QueryParams.getQueryParams(url);
+//     if (errorCode) throw new Error(errorCode);
 
-    const {access_token, refresh_token} = params;
-    globalAccessToken = access_token;
-    if (!access_token) return;
+//     const {access_token, refresh_token} = params;
+//     globalAccessToken = access_token;
+//     if (!access_token) return;
 
-    const {data, error} = await supabase.auth.setSession({
-        access_token,
-        refresh_token
-    });
-    if (error) throw error;
-    console.log("data.session: " + data.session)
-    return data.session;
+//     const {data, error} = await supabase.auth.setSession({
+//         access_token,
+//         refresh_token
+//     });
+//     if (error) throw error;
+//     console.log("data.session: " + data.session)
+//     return data.session;
 
-}
-
+// }
 
 export default function LoginScreen() {
 
+    const navigation = useNavigation();
+    // const url = Linking.useURL();
+    // if (url) createSessionFromUrl(url); 
+
     [email, onChangeUsername] = React.useState();
     [password, onChangePassword] = React.useState();
-    const navigation = useNavigation();
-    const url = Linking.useURL();
-    if (url) createSessionFromUrl(url); 
-
-const subscription = supabase.auth.onAuthStateChange((event, session) => {
-    // console.log(event, session)
-
-    if (event === 'INITIAL_SESSION') {
-    // handle initial session
-    console.log("Initial Session")
-    } else if (event === 'SIGNED_IN') {
-        // console.log("Inside SIGNED_IN");
-        // console.log("flag: " + (JSON.stringify(session.user.user_metadata) && navigation.push('Swipe')) )
-
-        getSession()
-        .then((data) => clearMatchData(data))
 
 
-        if (!JSON.stringify(session.user.user_metadata.image)){
-            if(!JSON.stringify(session.user.user_metadata.alias))
-                navigation.push('SignUpAliasAdd')
-            else navigation.push('SignUpImageAdd')
-        }
-        // else navigation.push('SignUpConfirm')
-        else navigation.push('Swipe')
+    const subscription = supabase.auth.onAuthStateChange((event) => {
 
-        // handle sign in event
-    } else if (event === 'SIGNED_OUT') {
-        console.log("Inside SIGNED_OUT");
-        // handle sign out event
-    } else if (event === 'PASSWORD_RECOVERY') {
-        console.log("Inside PASSWORD_RECOVERY");
-        // handle password recovery event
-    } else if (event === 'TOKEN_REFRESHED') {
-        console.log("Inside TOKEN_REFRESHED");
-        // handle token refreshed event
-    } else if (event === 'USER_UPDATED') {
-        console.log("Inside USER_UPDATED");
-    }
-})
+
+        if (event === 'SIGNED_IN') {
+            // Clearing match data for matching algorithm debugging
+            // getUserID()
+            // .then((data) => clearMatchData(data))
+
+            navigation.push('Swipe')
+            loadUserData()
+        } 
+    })
+
 
     useEffect(() => {
 
@@ -87,16 +65,6 @@ const subscription = supabase.auth.onAuthStateChange((event, session) => {
             password: password,
         })
     }
-
-    // const handleClickGoogle = () => {
-    //     // performOAuthGoogle().then(() => authSuccess == true ? navigation.push('Swipe'): console.log("no pee pee found"))
-    //     performOAuthGoogle();
-    // }
-    // const handleClickGithub = () => {
-    //     // performOAuthGithub().then(() => authSuccess == true ? navigation.push('Swipe'): console.log("no pee pee found"))
-    //     performOAuthGithub();
-    // }
-
 
     return (
         <KeyboardAvoidingView behavior='padding'>
