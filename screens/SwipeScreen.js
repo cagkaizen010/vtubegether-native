@@ -16,15 +16,6 @@ export default function SwipeScreen() {
   const navigation=useNavigation();
   const swipeRef = useRef()
 
-  useEffect(() => {
-    console.log(data)
-    setUID(data.user_uid)
-    setID(data.user_id)
-    loadCardData()
-    // loadCardData()
-
-  }, [getUserUID, loadCardData ])
-
 
   const loadCardData = async () => {
     // Load user's UID
@@ -33,8 +24,6 @@ export default function SwipeScreen() {
     
     // setID(data.user_id)
 
-    console.log("currentUser_uid: " + currentUser_uid)
-    console.log("currentUser_id: " + currentUser_id)
     const {data: user, error} = await supabase
     .schema('public')
     .from('users')
@@ -44,8 +33,8 @@ export default function SwipeScreen() {
 
     user.map((person, i) => {
 
-      (data.user_uid == person.user_uid) ?
-      <></> :
+      (data.user_uid == person.user_uid)
+      ? <></> :
       setCards(x=> [...x,{
         name: person.alias,
         user_uid: person.user_uid,
@@ -57,16 +46,29 @@ export default function SwipeScreen() {
     })
   }
 
+  useEffect(() => {
+    // console.log("SwipeScreen.js useEffect()")
+
+    loadCardData()
+
+
+  }, [])
+
+
+
 
   // Store reject data to prevent rejected users from showing in Swipe feed.
   const handleSwipeLeft = async (cardIndex) => {
-    console.log(currentUser_id)
+
+
+    let card_uid = cards[cardIndex].user_uid
+
     const { error} = await supabase
       .schema('matches')
       .from('reject_uid')
       .insert({
-        user_uid: currentUser_uid,
-        reject: cards[cardIndex].user_uid
+        user_uid: data.user_uid,
+        reject: card_uid
       })
     if (error) console.log("ERROR! " + JSON.stringify(error))
   }
@@ -74,22 +76,27 @@ export default function SwipeScreen() {
 
   const handleSwipeRight = async (cardIndex) => {
 
+    // console.log(console.log("Data inside handleSwipeRight(): " + JSON.stringify(data)))
     let card_uid = cards[cardIndex].user_uid
+    let inbox_uid = ""
+
     // console.log("currentUser_uid: " + currentUser_uid)
     const {data: userCheck , error} = await supabase
       .schema('matches')
       .from('accept_uid')
       .select('*')
       .eq('user_uid', card_uid)
-      .eq('accept', currentUser_uid)
+      .eq('accept', data.user_uid)
     if (error) console.log("Error inside userCheck! " + JSON.stringify(error))
-
-
-    // console.log("userCheck: " + JSON.stringify(userCheck))
+    
+      // console.log("userCheck: " + JSON.stringify(userCheck))
 
     if (userCheck){
       // console.log("UserID: " + getUserID().then((pay) => {console.log(pay)}))
-      createChat(card_uid)
+      createChat({
+        "card_uid": card_uid, 
+        "data": data
+      })
     }
     
     // console.log("adding into accept_uid")
@@ -104,31 +111,49 @@ export default function SwipeScreen() {
     
   }
 
-  const createChat = async (user_uid) => {
-    console.log("creating chat")
+  const createChat = async (x) => {
+    // console.log("creating chat")
 
+    // console.log("x: " + JSON.stringify(x.data))
     const {data: cardUser_id, e} = await supabase
       .schema('public')
       .from('users')
       .select('id')
-      .eq('user_uid', user_uid)
+      .eq('user_uid', x.card_uid)
     if (e) console.log("Error in cardUser_id retrieval: ", error)
 
-    console.log("currentUser_id: " + currentUser_id)
-    console.log("cardUser_id: " + JSON.stringify(cardUser_id[0]))
+    // console.log("cardUser_id: " + JSON.stringify(cardUser_id[0]))
+    // console.log("currentUser_id: " + JSON.stringify(x.data.user_uid))
 
-    const {data, error} = await supabase
+    const {data:inbox_uid_res, error} = await supabase
       .schema('public')
       .from('inbox')
       .insert([{
-        last_sent_user_id: currentUser_id,
+        last_sent_user_id: x.data.user_id,
         last_message: "Say hello!"
       }])
       .select()
     if (error) console.log("ERROR in message insertion! " + JSON.stringify(error))
 
+      inbox_uid = inbox_uid_res[0].inboxuid
+      console.log("inbox_uid: " + inbox_uid)
 
-    // console.log("ITS A MATCH")
+    let promises = [
+      x.data.user_id,
+      cardUser_id[0].id
+    ].map(async (id) => {
+      const {data: res, error: err} = await supabase
+        .schema('public')
+        .from('inbox_participants')
+        .insert([{
+          inbox_uid: inbox_uid, 
+          user_id: id
+        }])
+      if (error) console.log("Error inside inbox_participants insertion: " + error)
+        console.log("data insertion: " + JSON.stringify(res))
+    })
+    Promise.all(promises)
+    console.log("ITS A MATCH")
   }
 
   const handleSignOutClick = () => {

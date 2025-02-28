@@ -28,19 +28,6 @@ export default function InboxScreen(){
         
     }, [])
 
-
-    // const getCurrentSession= async () => {
-    //     console.log("Getting Inbox")
-    //     const {data: user, error} = await supabase.auth.getSession();
-    //     if (error) {
-    //         console.log(error)
-    //         throw error
-    //     }
-    //     // console.log(JSON.stringify(user.session.user.id, null, 1))
-
-    //     return user;
-        
-    // }
     const getInbox = async (user_id) => {
         let chatChannels = [] 
         let usersID = null;

@@ -1,5 +1,5 @@
 // import * as React from 'react';
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useLayoutEffect} from 'react';
 import { View, ActivityIndicator } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -16,7 +16,7 @@ import * as SecureStore from 'expo-secure-store'
 
 // import { getSession, clearMatchData} from "../testTools/testTools"
 import { getSession, clearMatchData } from './components/testTools/testTools.js';
-import { loadUserData } from './components/user/userData.js';
+import { loadUserData, data} from './components/user/userData.js';
 import { useNavigation} from '@react-navigation/native'
 import { supabase } from './lib/helper/supabaseClient'
 
@@ -25,25 +25,26 @@ const Stack = createNativeStackNavigator();
 const App = () => {
   const [initialRoute, setInitialRoute] = useState(null)
 
-  useEffect(() => {
 
+  useEffect(() => {
+    // console.log("App.js useEffect()")
     // Persisting login for user
     const checkSession = async () => {
       const userToken = await AsyncStorage.getItem('userToken');
       setInitialRoute(userToken ? 'Swipe' : 'Login')
-      
-      // if(initialRoute == 'Swipe'){
-        // console.log("reff")
-        // loadUserData()
-      // }
     }
+    Promise.all(
+      checkSession()
+      .then(() => loadUserData())
+      .catch((error) => {console.log(error)})
+    )
+    // console.log("data: " + JSON.stringify(data))
 
-    checkSession()
-    .then(() => loadUserData())
 
   }, [initialRoute])
 
-  if (initialRoute === null){
+
+  if ((initialRoute === null) ){
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <ActivityIndicator size="large" color="#FFFFFF" />
