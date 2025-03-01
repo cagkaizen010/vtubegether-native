@@ -13,8 +13,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage"
 
 const signInWithEmail = async (cred) => {
 
-
-
     const { data, error} = await supabase.auth.signInWithPassword({
         email: cred.email,
         password: cred.password,
@@ -29,14 +27,7 @@ const signInWithEmail = async (cred) => {
 
         await AsyncStorage.setItem('userToken', cred.email)
         console.log("AsyncStorage email set.")
-        // await setItemAsync('userEmail', cred.email)
-        //     if (!JSON.stringify(data.user.user_metadata.image)){
-        //     if(!JSON.stringify(data.user.user_metadata.alias))
-        //         navigation.push('SignUpAliasAdd')
-        //     else navigation.push('SignUpImageAdd')
-        // }
-        // else 
-        // navigation.push('Swipe')
+
     }
     catch (error) {
         console.log( error)

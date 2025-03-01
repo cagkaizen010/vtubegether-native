@@ -12,13 +12,12 @@ export default function InboxScreen(){
 
     // const [isLoading, setIsLoading] = useState(false);
     const navigation = useNavigation()
-    const [inboxData, onChangeInboxData] = useState();
+    const [inboxData, onChangeInboxData] = useState(null);
 
     useEffect(() => {
         const getAllInformation = async () => {
-            onChangeInboxData(null)
 
-            getUserUID()
+            getUserData()
             .then((result) => getInbox(result))
             .then((data) => uploadInboxData(data))
             .catch((error) => {console.log(error)})
@@ -28,10 +27,12 @@ export default function InboxScreen(){
         
     }, [])
 
-    const getInbox = async (user_id) => {
+    const getInbox = async (userData) => {
+        console.log("user_id: " + JSON.stringify(userData))
         let chatChannels = [] 
         let usersID = null;
         let inbox_uuid = []
+        // let user_id = userData.id
 
 
         let { data: inbox_uuid_array, err} = await supabase
@@ -44,12 +45,14 @@ export default function InboxScreen(){
             console.log("INSIDE currentUser_inbox_uid retrieval: " + err)
             throw err
         }
-        // console.log("inbox_uuid_array: " + inbox_uuid_array)
+
+        console.log("inbox_uuid_array: " + inbox_uuid_array)
 
         inbox_uuid_array.map((inboxes, i) => {
             inbox_uuid.push(inboxes.inbox_uid) 
         })
 
+        console.log("inbox_uuid: " + inbox_uuid)
         let {data: filtered_inbox_uid, erro} = await supabase
         .from('inbox_participants')
         .select(`

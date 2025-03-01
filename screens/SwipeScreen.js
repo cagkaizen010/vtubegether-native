@@ -24,18 +24,22 @@ export default function SwipeScreen() {
     
     // setID(data.user_id)
 
+    console.log("inside loadCardData()")
+
     const {data: user, error} = await supabase
     .schema('public')
     .from('users')
     .select('*')
     if (error) console.log("Error in loadCardData()! + " + error)
 
+    
+      console.log("loaded users")
+      console.log("data.user_uid: " + data.user_uid)
 
     user.map((person, i) => {
 
       (data.user_uid == person.user_uid)
-      ? <></> :
-      setCards(x=> [...x,{
+      ? <></> : setCards(x=> [...x,{
         name: person.alias,
         user_uid: person.user_uid,
         age: 24,
@@ -43,18 +47,17 @@ export default function SwipeScreen() {
         pic: person.image,
         id: i,
       }])
+    
     })
   }
 
   useEffect(() => {
-    // console.log("SwipeScreen.js useEffect()")
+    console.log("SwipeScreen.js useEffect()")
 
     loadCardData()
 
 
   }, [])
-
-
 
 
   // Store reject data to prevent rejected users from showing in Swipe feed.
@@ -136,9 +139,10 @@ export default function SwipeScreen() {
     if (error) console.log("ERROR in message insertion! " + JSON.stringify(error))
 
       inbox_uid = inbox_uid_res[0].inboxuid
-      console.log("inbox_uid: " + inbox_uid)
+      // console.log("inbox_uid: " + inbox_uid)
 
-    let promises = [
+    let promises = 
+    [
       x.data.user_id,
       cardUser_id[0].id
     ].map(async (id) => {
@@ -150,9 +154,13 @@ export default function SwipeScreen() {
           user_id: id
         }])
       if (error) console.log("Error inside inbox_participants insertion: " + error)
-        console.log("data insertion: " + JSON.stringify(res))
+        // console.log("data insertion: " + JSON.stringify(res))
     })
-    Promise.all(promises)
+    await Promise.all(promises)
+
+
+
+
     console.log("ITS A MATCH")
   }
 

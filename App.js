@@ -27,18 +27,19 @@ const App = () => {
 
 
   useEffect(() => {
-    // console.log("App.js useEffect()")
+    console.log("App.js useEffect()")
     // Persisting login for user
     const checkSession = async () => {
+      console.log("Checking session")
       const userToken = await AsyncStorage.getItem('userToken');
       setInitialRoute(userToken ? 'Swipe' : 'Login')
     }
-    Promise.all(
-      checkSession()
-      .then(() => loadUserData())
-      .catch((error) => {console.log(error)})
-    )
-    // console.log("data: " + JSON.stringify(data))
+    
+    checkSession()
+    .then((res) => loadUserData())
+    .catch((error) => {console.log(error)})
+    
+    console.log("data: " + JSON.stringify(data))
 
 
   }, [initialRoute])
