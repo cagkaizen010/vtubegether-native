@@ -35,8 +35,8 @@ const App = () => {
       setInitialRoute(userToken ? 'Swipe' : 'Login')
     }
     
-    checkSession()
-    .then((res) => loadUserData())
+    Promise.all([checkSession(),
+    loadUserData()])
     .catch((error) => {console.log(error)})
     
     console.log("data: " + JSON.stringify(data))

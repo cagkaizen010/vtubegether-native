@@ -9,7 +9,7 @@ let data = {
     image: "",
 }
 
-const loadUserData = () => {
+const loadUserData = async () => {
     console.log("Inside loadUserData")
     // await getUserUID()
     // .then((uid) => {data.user_uid = uid})
@@ -23,7 +23,7 @@ const loadUserData = () => {
         data.image = res.image
     } 
 
-    getUserData()
+    await getUserData()
     .then((res) => storeUserData(res))
     .catch((error) => {console.log(error)})
     console.log("user data loaded")

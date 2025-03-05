@@ -54,70 +54,123 @@ export default function SwipeScreen() {
   useEffect(() => {
     console.log("SwipeScreen.js useEffect()")
 
-    loadCardData()
+    Promise.resolve(loadCardData())
 
 
   }, [])
 
 
   // Store reject data to prevent rejected users from showing in Swipe feed.
-  const handleSwipeLeft = async (cardIndex) => {
+  // const handleSwipeLeft = async (cardIndex) => {
 
 
-    let card_uid = cards[cardIndex].user_uid
+  //   let card_uid = cards[cardIndex].user_uid
 
-    const { error} = await supabase
-      .schema('matches')
-      .from('reject_uid')
-      .insert({
-        user_uid: data.user_uid,
-        reject: card_uid
-      })
-    if (error) console.log("ERROR! " + JSON.stringify(error))
-  }
+  //   const { error} = await supabase
+  //     .schema('matches')
+  //     .from('reject_uid')
+  //     .insert({
+  //       user_uid: data.user_uid,
+  //       reject: card_uid
+  //     })
+  //   if (error) console.log("ERROR! " + JSON.stringify(error))
+  // }
 
 
-  const handleSwipeRight = async (cardIndex) => {
+  // const handleSwipeRight = async (cardIndex) => {
 
-    // console.log(console.log("Data inside handleSwipeRight(): " + JSON.stringify(data)))
-    let card_uid = cards[cardIndex].user_uid
-    let inbox_uid = ""
+  //   // console.log(console.log("Data inside handleSwipeRight(): " + JSON.stringify(data)))
+  //   let card_uid = cards[cardIndex].user_uid
+  //   let inbox_uid = ""
 
-    // console.log("currentUser_uid: " + currentUser_uid)
-    const {data: userCheck , error} = await supabase
-      .schema('matches')
-      .from('accept_uid')
-      .select('*')
-      .eq('user_uid', card_uid)
-      .eq('accept', data.user_uid)
-    if (error) console.log("Error inside userCheck! " + JSON.stringify(error))
+  //   // console.log("currentUser_uid: " + currentUser_uid)
+  //   const {data: userCheck , error} = await supabase
+  //     .schema('matches')
+  //     .from('accept_uid')
+  //     .select('*')
+  //     .eq('user_uid', card_uid)
+  //     .eq('accept', data.user_uid)
+  //   if (error) console.log("Error inside userCheck! " + JSON.stringify(error))
     
-      // console.log("userCheck: " + JSON.stringify(userCheck))
+  //     // console.log("userCheck: " + JSON.stringify(userCheck))
 
-    if (userCheck){
-      // console.log("UserID: " + getUserID().then((pay) => {console.log(pay)}))
-      createChat({
-        "card_uid": card_uid, 
-        "data": data
-      })
+  //   if (userCheck){
+  //     // console.log("UserID: " + getUserID().then((pay) => {console.log(pay)}))
+  //     createChat({
+  //       "card_uid": card_uid, 
+  //       "data": data
+  //     })
+  //   }
+    
+  //   // console.log("adding into accept_uid")
+  //   const {err} = await supabase
+  //     .schema('matches')
+  //     .from('accept_uid')
+  //     .insert({
+  //       user_uid: currentUser_uid,
+  //       accept: card_uid
+  //     })
+  //   if (err) console.log(error)
+    
+  // }
+
+const handleSwipeRight = async (cardIndex) => {
+
+    console.log("handleSwipeRight")
+    let card_uid = cards[cardIndex].user_uid
+    console.log("card_uid: " + card_uid)
+    console.log("data.user_uid: " + data.user_uid)
+    
+    const {data: userCheck, error} = await supabase
+        .schema('matches')
+        .from('pairs')
+        .select('match')
+        .eq('user', card_uid)
+        .eq('card', data.user_uid)
+    if (error) console.log("Error inside userCheck! " + JSON.stringify(error))
+
+      console.log("userCheck: " + JSON.stringify(userCheck))
+    if (userCheck[0].match == true) {
+      console.log("creating chat")
+        createChat({
+            "card_uid": card_uid,
+            "data": data
+        })
     }
     
-    // console.log("adding into accept_uid")
     const {err} = await supabase
-      .schema('matches')
-      .from('accept_uid')
-      .insert({
-        user_uid: currentUser_uid,
-        accept: card_uid
-      })
-    if (err) console.log(error)
+        .schema('matches')
+        .from('pairs')
+        .insert({
+            user: data.user_uid,
+            card: card_uid,
+            match: true
+        })
+
+}
+
+
+
+const handleSwipeLeft = async (cardIndex) => {
+    let card_uid = cards[cardIndex].user_uid
+
+    const {error} = await supabase
+        .schema('matches')
+        .from('pairs')
+        .insert({
+            user: data.user_uid,
+            card: card_uid,
+            match: false 
+        })
+
     
-  }
+}
+
 
   const createChat = async (x) => {
     // console.log("creating chat")
 
-    // console.log("x: " + JSON.stringify(x.data))
+    console.log("x: " + JSON.stringify(x.data))
     const {data: cardUser_id, e} = await supabase
       .schema('public')
       .from('users')
@@ -157,9 +210,6 @@ export default function SwipeScreen() {
         // console.log("data insertion: " + JSON.stringify(res))
     })
     await Promise.all(promises)
-
-
-
 
     console.log("ITS A MATCH")
   }

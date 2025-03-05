@@ -41,7 +41,7 @@ const getUserData = async () => {
 
     let data = [] 
 
-    retrieve_uid()
+    await retrieve_uid()
     .then( (id) => retrieve_data(id))
     .then( (res) => {data = res})
     .catch((error) => {console.log("Error inside retrieve_uid: " + error)})

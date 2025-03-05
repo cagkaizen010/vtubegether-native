@@ -6,6 +6,7 @@ import tw from 'twrnc'
 import {Icon} from 'react-native-elements'
 import { supabase } from '../lib/helper/supabaseClient'
 import {getUserUID} from '../components/testTools/testTools'
+import { data } from '../components/user/userData'
 // import userData from '../components/message/data/userData'
 
 export default function InboxScreen(){
@@ -17,8 +18,7 @@ export default function InboxScreen(){
     useEffect(() => {
         const getAllInformation = async () => {
 
-            getUserData()
-            .then((result) => getInbox(result))
+            getInbox()
             .then((data) => uploadInboxData(data))
             .catch((error) => {console.log(error)})
             // setIsLoading(false)
@@ -27,8 +27,8 @@ export default function InboxScreen(){
         
     }, [])
 
-    const getInbox = async (userData) => {
-        console.log("user_id: " + JSON.stringify(userData))
+    const getInbox = async () => {
+        // console.log("user_id: " + JSON.stringify(data))
         let chatChannels = [] 
         let usersID = null;
         let inbox_uuid = []
@@ -40,13 +40,13 @@ export default function InboxScreen(){
         .select(`
             inbox_uid
             `)
-        .eq("user_id", user_id)
+        .eq("user_id", data.user_id)
         if (err) {
             console.log("INSIDE currentUser_inbox_uid retrieval: " + err)
             throw err
         }
 
-        console.log("inbox_uuid_array: " + inbox_uuid_array)
+        console.log("inbox_uuid_array: " + JSON.stringify(inbox_uuid_array))
 
         inbox_uuid_array.map((inboxes, i) => {
             inbox_uuid.push(inboxes.inbox_uid) 
@@ -66,7 +66,7 @@ export default function InboxScreen(){
             )
             `)
         .in('inbox_uid', inbox_uuid)
-        .neq('user_id', user_id)
+        .neq('user_id', data.user_id)
         if (erro) {
             console.log("INSIDE currentUser_inbox_uid retrieval: " + erro)
             throw erro
