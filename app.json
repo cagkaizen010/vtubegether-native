@@ -1,68 +1,53 @@
 {
-
   "expo": {
-    "newArchEnabled": true, 
+    "newArchEnabled": true,
     "scheme": "exp://192.168.0.109:8081",
-
     "name": "vtubegether-native",
-
     "slug": "vtubegether-native",
-
     "description": "A place for online influencers to network.",
-
     "version": "1.0.0",
-
     "orientation": "portrait",
-
     "icon": "./assets/icon.png",
-
     "userInterfaceStyle": "light",
-
     "splash": {
-
       "image": "./assets/splash.png",
-
       "resizeMode": "contain",
-
       "backgroundColor": "#ffffff"
-
     },
-
     "assetBundlePatterns": [
-
       "**/*"
-
     ],
-
     "ios": {
-
-      "supportsTablet": true
-
-    },
-
-    "android": {
-
-      "adaptiveIcon": {
-
-        "foregroundImage": "./assets/adaptive-icon.png",
-
-        "backgroundColor": "#ffffff"
-
+      "supportsTablet": true,
+      "bundleIdentifier": "com.tsukamisama.vtubegethernative",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
       }
-
     },
-
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.tsukamisama.vtubegethernative"
+    },
     "web": {
-
       "favicon": "./assets/favicon.png"
-
     },
-
     "plugins": [
-
       "expo-secure-store"
-
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "eafb4caa-4382-4c8a-8c60-e42c2524e5c0"
+      }
+    },
+    "owner": "tsukamisama",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/eafb4caa-4382-4c8a-8c60-e42c2524e5c0"
+    }
   }
 }
-
