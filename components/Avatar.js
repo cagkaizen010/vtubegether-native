@@ -2,7 +2,7 @@ import React, {useState} from 'react'
 import {Text, View, TouchableOpacity, StyleSheet, ImageBackground} from 'react-native'
 import tw from 'twrnc'
 import {Icon} from 'react-native-elements'
-import FileUploadModal from '../components/fileUpload/fileUpload'
+// import FileUploadModal from '../components/fileUpload/fileUpload'
 import * as ImagePicker from "expo-image-picker"
 
 const Avatar = ({

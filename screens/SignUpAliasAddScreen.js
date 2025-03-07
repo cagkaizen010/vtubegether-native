@@ -5,7 +5,7 @@ import  {Text, TouchableOpacity, View, Image, SafeAreaView, KeyboardAvoidingView
 import {Icon} from 'react-native-elements'
 import { supabase } from '../lib/helper/supabaseClient';
 import tw from 'twrnc';
-import fileUploadModal from '../components/fileUpload/fileUpload'
+// import fileUploadModal from '../components/fileUpload/fileUpload'
 import {email, password} from './SignupScreen'
 
 export default function SignUpAliasAddScreen({route}) {

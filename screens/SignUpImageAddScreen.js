@@ -5,7 +5,7 @@ import { useRoute, useNavigation } from '@react-navigation/native';
 import {Icon} from 'react-native-elements'
 import * as ImagePicker from 'expo-image-picker'
 import tw from 'twrnc'
-import FileUploadModal from '../components/fileUpload/fileUpload'
+// import FileUploadModal from '../components/fileUpload/fileUpload'
 import Avatar from '../components/Avatar';
 
 import {email, password } from './SignupScreen';

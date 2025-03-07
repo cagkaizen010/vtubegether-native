@@ -13,7 +13,7 @@ import InboxScreen from "./screens/Inbox.js"
 import LoginScreen, {authSuccess, globalAccessToken}  from './screens/LoginScreen.js'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as SecureStore from 'expo-secure-store'
-
+import { registerRootComponent } from 'expo';
 // import { getSession, clearMatchData} from "../testTools/testTools"
 import { getSession, clearMatchData } from './components/testTools/testTools.js';
 import { loadUserData, data} from './components/user/userData.js';
@@ -70,5 +70,7 @@ const App = () => {
       </NavigationContainer>
   );
 }
+
+// registerRootComponent(App)
 
 export default App;

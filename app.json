@@ -1,7 +1,7 @@
 {
   "expo": {
     "newArchEnabled": true,
-    "scheme": "exp://192.168.0.109:8081",
+    "scheme": "vtubegether",
     "name": "vtubegether-native",
     "slug": "vtubegether-native",
     "description": "A place for online influencers to network.",
@@ -32,6 +32,7 @@
       "package": "com.tsukamisama.vtubegethernative"
     },
     "web": {
+      "bundler": "metro",
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
