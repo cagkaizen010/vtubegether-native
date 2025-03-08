@@ -57,10 +57,10 @@ const styles = StyleSheet.create({
     position: "relative"
   },
   image: {
-    borderRadius: 75,
+    borderColor: "#f82",
+    borderRadius: 500,
     width: 150,
     height: 150,
-    borderColor: "#f82",
     borderWidth: 5,
   },
   editButton: {
@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
     padding: 5,
     margin: 10,
     height: 150,
-    width: 85, 
+    width: 150, 
      
   },
 });

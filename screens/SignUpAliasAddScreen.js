@@ -32,8 +32,6 @@ export default function SignUpAliasAddScreen({route}) {
         })
     }
 
-  
-
     return (
         <KeyboardAvoidingView behavior='padding'>
             <View className='bg-rose-700 h-full w-full'>

@@ -48,8 +48,9 @@ export default function LoginScreen() {
             // getUserID()
             // .then((data) => clearMatchData(data))
 
-            navigation.push('Swipe')
             loadUserData()
+            .then(() =>
+            navigation.push('Swipe'))
         } 
     })
 

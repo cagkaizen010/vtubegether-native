@@ -3,12 +3,15 @@ import React, {useState, useEffect, useLayoutEffect} from 'react';
 import { View, ActivityIndicator } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+
 import SwipeScreen from './screens/SwipeScreen.js';
 import SignupScreen from './screens/SignupScreen.js';
 import MessagesScreen from "./screens/MessagesScreen.js";
 import SignUpAliasAddScreen from './screens/SignUpAliasAddScreen';
 import SignUpImageAddScreen from './screens/SignUpImageAddScreen.js';
 import SignUpConfirmScreen from "./screens/SignUpConfirmScreen.js";
+import SignUpReworkScreen from './screens/SignUpReworkScreen.js';
+
 import InboxScreen from "./screens/Inbox.js"
 import LoginScreen, {authSuccess, globalAccessToken}  from './screens/LoginScreen.js'
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -58,7 +61,8 @@ const App = () => {
       <NavigationContainer>
         <Stack.Navigator initialRouteName={initialRoute} screenOptions={{headerShown: false, gestureEnabled: false}}>
                 <Stack.Screen name="Login" component={LoginScreen} />
-                <Stack.Screen name="Signup" component={SignupScreen} />
+                {/* <Stack.Screen name="Signup" component={SignupScreen} /> */}
+                <Stack.Screen name="Signup" component={SignUpReworkScreen}/>
                 <Stack.Screen name="SignUpAliasAdd" component={SignUpAliasAddScreen}/>
                 <Stack.Screen name="SignUpImageAdd" component={SignUpImageAddScreen}/>
                 <Stack.Screen name="Messages" component={MessagesScreen} />
