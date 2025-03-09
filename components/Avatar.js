@@ -23,18 +23,16 @@ const Avatar = ({
   <View>
     {!aviOnly && (
       <TouchableOpacity 
-        style={[!image && styles.editButton, 
-          "flex-1 items-center"]} 
+        style={!image && styles.editButton
+          } 
         onPress={onPress()}
-
       >
 
         {image && <ImageBackground
           source={{
             uri: image
             }}
-          style={[styles.editButton,
-            "flex-1 items-center"]}
+          style={styles.editButton}
           >
         </ImageBackground>}
       </TouchableOpacity>
@@ -56,20 +54,19 @@ const styles = StyleSheet.create({
     alignItems: "center",
     position: "relative"
   },
-  image: {
-    borderColor: "#f82",
-    borderRadius: 500,
-    width: 150,
-    height: 150,
-    borderWidth: 5,
-  },
+  // image: {
+  //   borderColor: "#f82",
+  //   borderRadius: 0,
+  //   borderWidth: 5,
+  // },
   editButton: {
-    
     backgroundColor: "#aef",
-    padding: 5,
-    margin: 10,
-    height: 150,
-    width: 150, 
+    padding: '35%',
+    maxWidth: '50%',
+
+    // height: '20%',
+    borderRadius: '100%',
+    // margin: 10,
      
   },
 });

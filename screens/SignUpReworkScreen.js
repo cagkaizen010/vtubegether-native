@@ -14,21 +14,23 @@ export default function SignUpReworkScreen() {
 
     return (
         <KeyboardAvoidingView behavior='padding'>
-            <View className='bg-rose-700 h-full w-full'>
+            <View className='bg-rose-700 h-full w-full justify-center items-center'>
                 <StatusBar style='light'/>
                 <Image className='h-full w-full absolute' source={require('../assets/images/background.png')}/>
 
                 {/* Form */}
-                <SafeAreaView className='flex items-center mx-4 space-y-4'>
+                <SafeAreaView className="flex items-center mx-4 h-full w-3/4">
                     {/* <View className='bg-orange-100 p-5 rounded-2x1 w-full'>
                         <Text>EMAIL: </Text>
                         <TextInput className='bg-orange-200' onChangeText={onChangeEmail} placeholder='Email' placeholderTextColor={'gray'}/>  
                     </View> */}
+                    <View className='container h-full  items-center bg-orange-700 '>
 
-                    <Avatar 
-                        image= {image}
-                        onPress = {() => onGalleryButtonPress()}
-                    />
+                        <Avatar 
+                            image= {image}
+                            onPress = {() => onGalleryButtonPress()}
+                        />
+                    </View>
                     
                 </SafeAreaView>
 
